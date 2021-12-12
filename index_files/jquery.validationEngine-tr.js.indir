@@ -1,0 +1,254 @@
+(function ($) {
+    $.fn.validationEngineLanguage = function () {
+    };
+    $.validationEngineLanguage = {
+        newLang: function () {
+            $.validationEngineLanguage.allRules = {
+                "required": { // Add your regex rules here, you can take telephone as an example
+                    "regex": "none",
+                    "alertText": "* Bu alanın girişi zorunludur",
+                    "alertTextCheckboxMultiple": "* Bu alanın seçimi zorunludur",
+                    "alertTextCheckboxe": "* Bu alanın seçimi zorunludur"
+                },
+                "minSize": {
+                    "regex": "none",
+                    "alertText": "* En az ",
+                    "alertText2": " karakter girilmelidir"
+                },
+                "maxSize": {
+                    "regex": "none",
+                    "alertText": "* En fazla ",
+                    "alertText2": " karakter girilmelidir"
+                },
+                "min": {
+                    "regex": "none",
+                    "alertText": "* En küçük değer "
+                },
+                "max": {
+                    "regex": "none",
+                    "alertText": "* En büyük değer "
+                },
+                "past": {
+                    "regex": "none",
+                    "alertText": "* Date prior to "
+                },
+                "future": {
+                    "regex": "none",
+                    "alertText": "* Date past "
+                },
+                "maxCheckbox": {
+                    "regex": "none",
+                    "alertText": "* Checks allowed Exceeded"
+                },
+                "minCheckbox": {
+                    "regex": "none",
+                    "alertText": "* Please select ",
+                    "alertText2": " options"
+                },
+                "equals": {
+                    "regex": "none",
+                    "alertText": "* Fields do not match"
+                },
+                "phone": {
+                    // credit: jquery.h5validate.js / orefalo
+                    "regex": /^([\+][0-9]{1,3}[ \.\-])?([\(]{1}[0-9]{2,6}[\)])?([0-9 \.\-\/]{3,20})((x|ext|extension)[ ]?[0-9]{1,4})?$/,
+                    "alertText": "* Invalid phone number"
+                },
+                "email": {
+                    // Simplified, was not working in the Iphone browser
+                    "regex": /^([A-Za-z0-9_\-\.\'])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,6})$/,
+                    "alertText": "* Invalid email address"
+                },
+                "integer": {
+                    "regex": /^[\-\+]?\d+$/,
+                    "alertText": "* Bu alana sadece tamsayı değer girişi yapılabilmektedir"
+                },
+                "number": {
+                    // Number, including positive, negative, and floating decimal. credit: orefalo
+                    "regex": /^[\-\+]?(([0-9]+)([\.,]([0-9]+))?|([\.,]([0-9]+))?)$/,
+                    "alertText": "* Invalid floating decimal number"
+                },
+                "date": {
+                    // Date in ISO format. Credit: bassistance
+                    "regex": /^\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}$/,
+                    "alertText": "* Invalid date, must be in objY-MM-DD format"
+                },
+                "ipv4": {
+                    "regex": /^([1-9][0-9]{0,2})+\.([1-9][0-9]{0,2})+\.([1-9][0-9]{0,2})+\.([1-9][0-9]{0,2})+$/,
+                    "alertText": "* Invalid IP address"
+                },
+                "url": {
+                    "regex": /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/,
+                    "alertText": "* Invalid URL"
+                },
+                "onlyNumberSp": {
+                    "regex": /^[0-9\ ]+$/,
+                    "alertText": "* Bu alana sadece rakam girişi yapılabilmektedir"
+                },
+                "onlyNumber": {
+                    "regex": /^[0-9]+$/,
+                    "alertText": "* Bu alana sadece rakam girişi yapılabilmektedir"
+                },
+                "onlyLetterSp": {
+                    "regex": /^[a-zA-Z\ \']+$/,
+                    "alertText": "* Letters only"
+                },
+                "onlyLetterNumber": {
+                    "regex": /^[0-9a-zA-Z]+$/,
+                    "alertText": "* No special characters allowed"
+                },
+                // --- CUSTOM RULES -- Those are specific to the demos, they can be removed or changed to your likings
+                "ajaxUserCall": {
+                    "url": "ajaxValidateFieldUser",
+                    // you may want to pass extra data on the ajax call
+                    "extraData": "name=eric",
+                    "alertText": "* This user is already taken",
+                    "alertTextLoad": "* Validating, please wait"
+                },
+                "ajaxNameCall": {
+                    // remote json service location
+                    "url": "ajaxValidateFieldName",
+                    // error
+                    "alertText": "* This name is already taken",
+                    // if you provide an "alertTextOk", it will show as a green prompt when the field validates
+                    "alertTextOk": "* This name is available",
+                    // speaks by itself
+                    "alertTextLoad": "* Validating, please wait"
+                },
+                "validate2fields": {
+                    "alertText": "* Please input HELLO"
+                }
+                ,
+                "customerNumber": {
+                    "regex": /^[0-9]+$/,
+                    "alertText": "* Müşteri numaranızı yalnızca rakam olarak giriniz"
+                }
+            };
+
+        }
+    };
+    $.validationEngineLanguage.newLang();
+})(jQuery);
+
+
+
+
+function checkIBAN(field) {
+    var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var digits = "0123456789";
+    var strIBAN = field.val();
+
+    if (isWhitespace(strIBAN) || strIBAN.length != 26) {
+        return "IBAN bilgisi 26 karakter olmalıdır.";
+    }
+
+    var countryCode = strIBAN.substr(0, 2);
+    if (countryCode != 'TR') {
+        return "Ülke kodu TR olmalıdır.";
+    }
+    if (!checkCharsFromList(letters + digits, strIBAN)) {
+        return "IBAN bilgisi harf ve sayılardan oluşmalıdır.";
+    }
+
+    if (!checkControlDigits(strIBAN)) {
+        return "IBAN bilgisi geçerli değil, lütfen kontrol ederek tekrar deneyiniz.";
+    }
+}
+
+function isValidIBANTR(strIBAN, showErrMsg) {
+
+    if (isWhitespace(strIBAN) || strIBAN.length != 26) {
+        if (showErrMsg)
+            alertMSG("IBAN bilgisi 26 karakter olmalıdır.");
+        return false;
+    }
+
+    var countryCode = strIBAN.substr(0, 2);
+    if (countryCode != 'TR') {
+        if (showErrMsg)
+            alertMSG("Ülke kodu TR olmalıdır.");
+        return false;
+    }
+    if (!checkCharsFromList(letters + digits, strIBAN)) {
+        if (showErrMsg)
+            alertMSG("IBAN bilgisi harf ve sayılardan oluşmalıdır.");
+        return false;
+    }
+
+    if (!checkControlDigits(strIBAN)) {
+        if (showErrMsg)
+            alertMSG("IBAN bilgisi geçerli değil, lütfen kontrol ederek tekrar deneyiniz.");
+        return false;
+    }
+    return true;
+}
+
+function checkComment(field, rules, i, options) {
+    if (!isValidComment($(field).val())) {
+        return "Lütfen açıklama için geçerli karakterler giriniz";
+    }
+}
+
+function subchk(btn) {
+    var result = false;
+
+    if (!is_DefaultSubmit) {
+        if ($(btn).attr("causesval") == undefined || $(btn).attr("causesval") == "true") {
+            if (jQuery('form').length > 0) {
+                if (jQuery('form').validationEngine('validate') == true) {
+
+                    if (typeof (Page_ClientValidate) == 'function') {
+                        var validationGroup = $(btn).attr('data-validation-group') || '';
+                        Page_ClientValidate(validationGroup);
+                        result = Page_IsValid;
+                    }
+                    else {
+                        result = true;
+                    }
+                }
+                else {
+                    try {
+                        if (Page_IsValid != undefined) {
+                            Page_IsValid = false;
+                            result = false;
+                        }
+                    } catch (e) { }
+
+                    result = false;
+                }
+            }
+        }
+        else if ($(btn).attr("causesval") == "false") {
+            try {
+                if (Page_IsValid != undefined) {
+                    Page_IsValid = true;
+                }
+                if (Page_BlockSubmit != undefined) {
+                    Page_BlockSubmit = false;
+                }
+            } catch (e) { }
+            result = true;
+        }
+
+        if (result) {
+            dummyLoading();
+            is_DefaultSubmit = true;
+            //try { setTxnExecuteStatus('1'); } catch (e) { }
+            result = true;
+        }
+    } else {
+        alertMSG('İşleminiz henüz tamamlanmadı. Lütfen bekleyiniz.');
+        VeriBranch.SetIframeLightBox();
+    }
+    return result;
+}
+function LookAtNumber(obj) {
+    if (event.keyCode != "37" && event.keyCode != "38" && event.keyCode != "39" && event.keyCode != "40" && event.keyCode != "9" && event.keyCode != "17" && event.keyCode != "16" && event.keyCode != "20") {
+        x = obj.value;
+        var REG_EXP = /[^\d]/g;    /* find any non number */
+        obj.value = obj.value.replace(REG_EXP, ""); /* Relace any non number*/
+    }
+    if (event.keyCode == "9") {
+        obj.select();
+    }    
+}

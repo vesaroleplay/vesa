@@ -1,0 +1,354 @@
+/* ezMark (Minified)* @version 1.0*/
+(function (a) { a.fn.ezMark = function (b) { b = b || {}; var c = { checkboxCls: b.checkboxCls || "ez-checkbox", radioCls: b.radioCls || "ez-radio", checkedCls: b.checkedCls || "ez-checked", selectedCls: b.selectedCls || "ez-selected", hideCls: "ez-hide" }; return this.each(function () { var e = a(this); var d = e.attr("type") == "checkbox" ? '<div class="' + c.checkboxCls + '">' : '<div class="' + c.radioCls + '">'; if (e.attr("type") == "checkbox") { e.addClass(c.hideCls).wrap(d).change(function () { if (a(this).is(":checked")) { a(this).parent().addClass(c.checkedCls) } else { a(this).parent().removeClass(c.checkedCls) } }); if (e.is(":checked")) { e.parent().addClass(c.checkedCls) } } else { if (e.attr("type") == "radio") { e.addClass(c.hideCls).wrap(d).change(function () { a('input[name="' + a(this).attr("name") + '"]').each(function () { if (a(this).is(":checked")) { a(this).parent().addClass(c.selectedCls) } else { a(this).parent().removeClass(c.selectedCls) } }) }); if (e.is(":checked")) { e.parent().addClass(c.selectedCls) } } } }) } })(jQuery);
+
+
+function isNumeric(data) {
+    var alphabet = "0123456789";
+    return checkCharsFromList(alphabet, data);
+}
+function checkCharsFromList(list, data) {
+    //ikinci ksýmý girip harf girmediyse
+    for (i = 0; i < data.length; i++) {
+        var char1 = data.charAt(i);
+        if (list.indexOf(char1) == -1) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+(function ($) {
+
+    $('.isNumber').keypress(function (event) {
+        return isNumber(event);
+    });
+    $('.isString').keypress(function (event) {
+        return isString(event);
+    })
+    if ($('input[type="checkbox"]').length > 0) $('.mobile-sign  input[type="checkbox"]').ezMark();
+})(jQuery);
+
+
+
+$(document).ready(function () {
+
+    if ($("#frmLoginStart").length > 0)
+        $("#frmLoginStart").validationEngine('attach', {
+            isOverflown: true,
+            overflownDIV: "#container"
+        });
+
+    $('.errorMessage').find('a.close').click(function () {
+        $(this).parent().addClass('hide');
+    });
+
+    $('#txtUsername').bind('contextmenu', function (e) {
+        return false;
+    });
+
+    $('#txtPassword').bind('contextmenu', function (e) {
+        return false;
+    });
+
+    $(':input').keypress(function (e) {
+        if (e.which == 13) {
+            loginSubmit();
+        }
+    });
+});
+
+
+
+function checkCustomerNo(field, rules, i, options) {
+    if (field.val() == "") {
+        return "Müþteri Numaranýzý Giriniz";
+    }
+    if (isNaN(field.val()) || !isNumeric(field.val())) {
+        return "Müþteri Numaranýzý Yalnýzca Rakam Olarak Giriniz";
+    }
+
+}
+
+function checkPassword(field, rules, i, options) {
+    if (field.val() == "") {
+        return "Lütfen Þifrenizi Giriniz";
+    }
+    if (isNaN(field.val()) || !isNumeric(field.val())) {
+        return "Þifrenizi Yalnýzca Rakam Olarak Giriniz";
+    }
+    if (field.val().length != 5) {
+        return "Þifrenizi 5 Karakter Olarak Giriniz";
+    }
+}
+
+
+function checkUsername(field, rules, i, options) {
+    if (field.val() == "") {
+        return "Kullanýcý Adýnýzý (Firma için) Giriniz";
+    }
+    if (field.val().length != 5) {
+        return "Kullanýcý Adýnýzý (Firma için) Giriniz";
+    }
+
+}
+
+$(document).ready(function () {
+
+    $('.v-input').click(function () {
+        $("input.password").focus();
+    })
+    $("input.password").focus(function () {
+        $('div.password').addClass("v-focus");
+    }).blur(function () {
+        if ($(this).val() == "") { $('div.password').removeClass("v-focus"); }
+    });
+
+    $("input.password2").focus(function () {
+        $(this).parent().children(".global-input label").hide();
+    }).blur(function () {
+        if ($(this).val() == "") { $(this).parent().children(".global-input label").show(); }
+    });
+
+    $(".password input").blur(function () {
+        $(".password-text input").attr("value", $(this).val())
+    });
+
+    $("input.password").keydown(function () {
+        if ($(this).val() > 0) {
+            $(this).parent().children(".global-input label").show();
+        }
+        $(this).parent().children(".global-input label").hide();
+    });
+
+    $(".vpad-password").click(function () {
+        $(".password-text").hide();
+        $(".global-input.password").show();
+
+    });
+
+    $(".global-input label").click(function () {
+        $(this).parent().children("input.password").focus();
+        $(this).parent().children(".global-input label").hide();
+    });
+
+
+    $(".vpad").toggle(function () {
+        $("#keyboard").show();
+        $(this).parent().children("input").focus();
+    }, function () { $("#keyboard").hide(); $(this).parent().children("input").blur(); });
+
+
+    if ($(".login-err span.error").text() == "") { $(".login-err").hide(); } else { $(".login-err").show(); }
+
+    if ($('.tipsy-sw').length > 0) {
+        $('.tipsy-sw').tipsy({ fade: true, gravity: 's', opacity: 1 });
+    }
+});
+
+
+function addclass(classname, element) {
+    var cn = element.className;
+    if (cn.indexOf(classname) != -1) {
+        return;
+    }
+    if (cn != '') {
+        classname = ' ' + classname;
+    }
+    element.className = cn + classname;
+}
+
+function removeclass(classname, element) {
+    var cn = element.className;
+    var rxp = new RegExp("\\s?\\b" + classname + "\\b", "g");
+    cn = cn.replace(rxp, '');
+    element.className = cn;
+}
+
+function thisFocus(th) {
+    th.value = th.value == th.getAttribute('data-value') ? '' : th.value;
+    addclass('have-value', th);
+}
+
+function thisBlur(th) {
+    th.value = th.value == '' ? th.getAttribute('data-value') : th.value;
+    if (th.value == th.getAttribute('data-value')) {
+        removeclass('have-value', th);
+    }
+}
+
+function isNumber(evt) {
+    var charCode = (evt.which) ? evt.which : event.keyCode;
+    if (charCode != 44 && charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+    return true;
+}
+function isString(evt) {
+    var charCode = (evt.which) ? evt.which : event.keyCode;
+    if (charCode != 46 && charCode != 32 && (charCode < 97 || charCode > 122) && (charCode < 65 || charCode > 90) &&
+     charCode != 287 && charCode != 286 && charCode != 304 && charCode != 305 && charCode != 220 && charCode != 252 &&
+     charCode != 350 && charCode != 351 && charCode != 214 && charCode != 246 && charCode != 199 && charCode != 231) return false;
+    return true;
+}
+function isNum(evt) {
+    var charCode = (evt.which) ? evt.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+    return true;
+}
+
+//CAPSLOCK
+$(function () {
+    $('.capslock-control').on('keypress', function (e) { check_capslock(e); });
+
+    $("#faq").click(function () {
+        openHelpBox();
+    });
+
+    $(".help-video-button").live('click', function () {
+        $("#helpContainer").fadeOut(600);
+        OpenVideoBox();
+
+    });
+
+    $(".sss-button").live('click', function () {
+        openHelpBox();
+        $(".hv-container").fadeOut(600);
+        $("#jplayer1").jPlayer("pause");
+    });
+
+    $('.security-link').click(function (e) {
+        e.preventDefault();
+        if ($('.security-wrapper').length < 1) {
+            $.get(relativePath + 'Transactions/General/SecurityAgreement.aspx?r=' + Math.random(), function (html) {
+                $('.security-container').html(html);
+            });
+        }
+        $('.security-container').fadeIn(400, function () { setItemsScroll(); });
+    });
+
+    $(".security-closer").live('click', function () { $(".security-container").fadeOut(400); });
+
+    $(window).resize(function () {
+        if ($('.security-container').is(':visible') && $('.full-scroller.jspScrollable').length > 0) { setItemsScroll(); }
+    });
+
+
+    $(".help-closer").live('click', function () {
+        $('.help-container').fadeOut(300);
+        if ($("#jplayer1").length > 0) $("#jplayer1").jPlayer("pause");
+    });
+    $(".help-content .right-part ul li").live('click', function () {
+        $(".help-content .right-part ul li").removeClass("selected");
+        $(this).addClass("selected");
+    });
+
+});
+
+$('.capslock-control').on('keydown', function (e) { //check if capslock key was pressed in the whole window
+    e = e || event;
+    if (typeof (window.lastpress) === 'undefined') { window.lastpress = e.timeStamp; }
+    if (typeof (window.capsLockEnabled) !== 'undefined') {
+        var charCode = (e.which) ? e.which : e.keyCode;
+        if (charCode == 20) {
+            window.capsLockEnabled = !window.capsLockEnabled;
+            $('.capslock-box').toggle();
+        }
+        window.lastpress = e.timeStamp;
+        //sometimes this function is called twice when pressing capslock once, so I use the timeStamp to fix the problem
+    }
+});
+
+$('.capslock-control').on('blur', function () {
+    $('.capslock-box').hide();
+});
+
+function check_capslock(e) { //check what key was pressed in the form
+    var charCode = (e.which) ? e.which : e.keyCode;
+    var s = String.fromCharCode(charCode);
+
+    if (!isNumeric(s)) {
+        if (s.toUpperCase() === s && s.toLowerCase() !== s && !e.shiftKey) {
+            window.capsLockEnabled = true;
+            $('.capslock-box').show();
+        }
+        else {
+            window.capsLockEnabled = false;
+            $('.capslock-box').hide();
+        }
+    }
+}
+
+function bindSSS() {
+    $('.help-left-category ul li').click(function () {
+        var SSStabIndex = $(this).index();
+        $('.sss-all-tab-menu.sss-all-tab-content-active').removeClass('sss-all-tab-content-active');
+        $('.sss-all-tab-menu:eq(' + SSStabIndex + ')').addClass('sss-all-tab-content-active');
+        $('.help-left-category ul li a.activeLeft').removeClass('activeLeft');
+        $(this).find('a').addClass('activeLeft');
+        $('.sss-all-tab-content').height($('body').height() - 160).jScrollPane({ showArrows: false, verticalDragMinHeight: 20 });
+        $(window).resize(function () {
+            $('.sss-all-tab-content').height($('body').height() - 160).jScrollPane({ showArrows: false, verticalDragMinHeight: 20 });
+        });
+    });
+
+    var menuTitle = $(".sss-all-tab > a");
+    var subMenu = $(".sss-all-tab-menu ul");
+    menuTitle.click(function () {
+        var idx = menuTitle.index(this);
+        if (subMenu.eq(idx).css('display') == 'block') {
+            subMenu.eq(idx).slideUp(600);
+            menuTitle.eq(idx).removeClass('selected');
+        } else {
+            subMenu.slideUp(600).filter(':eq(' + idx + ')').slideDown(600);
+            menuTitle.removeClass('selected').filter(':eq(' + idx + ')').addClass('selected');
+        }
+        setTimeout(function () {
+            $('.sss-all-tab-content').jScrollPane({ showArrows: false, verticalDragMinHeight: 20 });
+        }, 600);
+    });
+
+    $(".help-closer").click(function () {
+        VeriBranch.FadeOut($(".help-container"));
+    });
+}
+
+function setItemsScroll() {
+    var bth = $('body', top.document).height(), aH = (bth > 380) ? bth : 380;
+    aH = aH - 100;
+    if ($('.security-container').is(':visible')) {
+        $('.security-content .full-scroller').height(aH).jScrollPane({ showArrows: false, verticalDragMinHeight: 20 });
+    }
+}
+
+
+var OpenVideoBoxFirstTime = true;
+function OpenVideoBox() {
+    if (OpenVideoBoxFirstTime) {
+        OpenVideoBoxFirstTime = false;
+        $.get(relativePath + 'Transactions/General/HelpVideo.aspx?r=' + Math.random(), function (html) {
+            $('.hv-container').html(html).fadeIn(300);
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = relativePath + 'Content/assets/js/jquery.jplayer.min.js';
+            $("head").append(script);
+            helpVideo();
+        });
+    } else {
+        $('.hv-container').fadeIn(300);
+    }
+
+}
+
+var openHelpBoxFirstTime = true;
+function openHelpBox() {
+    if (openHelpBoxFirstTime) {
+        openHelpBoxFirstTime = false;
+        $.get(relativePath + 'Transactions/General/LoginPageHelp.aspx?r=' + Math.random(), function (html) {
+            $('#helpContainer').html(html);
+            bindSSS();
+            VeriBranch.FadeIn($('#helpContainer'));
+        });
+    } else {
+        VeriBranch.FadeIn($('#helpContainer'));
+    }
+}

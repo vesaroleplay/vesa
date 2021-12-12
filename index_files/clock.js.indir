@@ -1,0 +1,72 @@
+﻿// JavaScript Document
+
+var months = new Array('Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık');
+var days = new Array('Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi');
+
+var monthsEng = new Array(	'January','February','March','April','May','June','July','August','September','October','November','December' );
+var daysEng = new Array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
+
+var seconds;
+var sLocale;
+
+function setupClock (s,locale) {
+
+	seconds = s;
+	sLocale = locale;
+	setClock();
+}
+
+function getFormattedClockDate(dateToday) {
+
+    var todayClockDate = dateToday.getDate();
+    var todayClockMonth = dateToday.getMonth() + 1;
+    var todayClockYear = dateToday.getFullYear();
+
+    if (todayClockMonth < 10)
+        todayClockMonth = '0' + todayClockMonth;
+
+    if (todayClockDate < 10)
+        todayClockDate = '0' + todayClockDate;
+
+    return todayClockDate + "/" + todayClockMonth + "/" + todayClockYear;
+}
+
+function setClock () {
+	var today = new Date();
+	today.setTime(seconds);
+	seconds+=500;
+
+	var str = '';
+	var elmLink;
+
+	var h = today.getHours();
+	if (h < 10) h = '0' + h;
+	var m = today.getMinutes();
+	if (m < 10) m = '0' + m;
+	var s = today.getSeconds();
+	if (s < 10) s = '0' + s;
+
+	var formattedClockDate = getFormattedClockDate(today);
+
+	str += formattedClockDate;
+	
+	if (sLocale == 'tr-TR') {
+	    str  = str +  ' ' + days[today.getDay()];
+	} else if (sLocale == null || sLocale == '') {
+	    str = str + ' ' + days[today.getDay()];
+	}
+	else {
+	    str = str + ' ' + daysEng[today.getDay()];
+	}
+
+	str += ' ' + h + ':' + m + ':' + s;
+
+	var clock = document.getElementById('footerdatetime');
+
+	if (clock != null) {
+	    clock.removeChild(clock.childNodes[0]);
+	    clock.appendChild(document.createTextNode(str));
+	}
+
+	window.setTimeout('setClock()', 500);
+}

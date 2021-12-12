@@ -1,0 +1,114 @@
+﻿window.VeriBranch = new Object();
+
+VeriBranch = {
+    RemoveIFrame: function ($iframe) {
+        //debugger;
+        var $childIframe = $iframe.contents().find('iframe');
+
+        if ($childIframe.length > 0) {
+            this.RemoveIFrame($childIframe);
+        }
+
+        $iframe.contents().empty(); // remove the iframe content
+        $iframe.removeAttr('src');
+        $iframe.remove();
+    },
+
+    FadeIn: function ($element, callBackFunction) {
+
+        if (this.IsAdvancedBrowser()) {
+            $element.fadeIn(VeriBranch.DefaultDuration, function () {
+                VeriBranch.ExecuteFunction(callBackFunction);
+            });
+        }
+        else {
+            $element.show();
+            VeriBranch.ExecuteFunction(callBackFunction);
+        }
+    },
+
+    FadeOut: function ($element, callBackFunction) {
+
+        if (this.IsAdvancedBrowser()) {
+            $element.fadeOut(VeriBranch.DefaultDuration, function () {
+                VeriBranch.ExecuteFunction(callBackFunction);
+            });
+        }
+        else {
+            $element.hide();
+            VeriBranch.ExecuteFunction(callBackFunction);
+        }
+    },
+
+    IsAdvancedBrowser: function () {
+        return !$.browser.msie || (parseFloat($.browser.msie && $.browser.version) > 8);
+    },
+
+    IsIOSDevice: function () {
+        var ua = navigator.userAgent.toLowerCase();
+        return /ipad/i.test(ua) || /ipod/i.test(ua) || /iphone/i.test(ua);
+    },
+
+    IsMobileDevice: function () {
+        var ua = navigator.userAgent.toLowerCase();
+        return /iPad/i.test(ua) || /iPhone/i.test(ua) || /iPod/i.test(ua) || /android/i.test(ua) || /webOS/i.test(ua) || /BlackBerry/i.test(ua);
+
+    },
+
+    IsEdge: function () {
+        var ua = navigator.userAgent.toLowerCase();
+        return /Edge/i.test(ua);
+    },
+
+    CheckTabInstance: function (h) {
+        if ($("#TabInstanceUniqueKey", top.document).val() != $("#TabInstanceUniqueKey").val()) {
+            top.location.href = h;
+        }
+    },
+    DefaultDuration: 600,
+
+    ExecuteFunction: function (callBackFunction) {
+        if (typeof callBackFunction === 'function') {
+            callBackFunction();
+        }
+    },
+
+    SetIframeLightBox: function () {
+        try {
+
+            var $lightBox = null,
+                $ = top.frames[0].window.$,
+                $lightBoxArray = $('.light-box-bg:visible');
+
+            $.each($lightBoxArray, function () {
+                try {
+                    $(this).veribranchLightBox('setIframeLightBox');
+                } catch (e) {
+                    //debugger;
+                }
+            });
+        } catch (e) { console.log(e.message) }
+    },
+
+    NavigationFormat: '',
+    NavigationFormatInLightBox: '',
+
+    CheckLocation: function (loginUrl) {
+        if (!parent.top.location.href.toLowerCase().contains("default.aspx")) {
+            top.location.href = loginUrl;
+        }
+    }
+}
+
+String.prototype.contains = function (it) {
+    return this.indexOf(it) != -1;
+};
+
+if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function (obj, start) {
+        for (var i = (start || 0), j = this.length; i < j; i++) {
+            if (this[i] === obj) { return i; }
+        }
+        return -1;
+    }
+}

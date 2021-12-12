@@ -1,0 +1,1064 @@
+var sLang = "tr_TR";
+trl = "TRL";
+
+var liballmsg = new Array;
+var strUserAgent = navigator.userAgent.toLowerCase();
+var isIE = strUserAgent.indexOf("msie") > -1;
+var isNS6 = strUserAgent.indexOf("netscape6") > -1;
+var isNS4 = !isIE && !isNS6 && parseFloat(navigator.appVersion) < 5;
+
+var frame1 =
+	window.top.document.documentElement.getElementsByTagName('frameset')[0];
+var frame2 =
+	window.top.document.documentElement.getElementsByTagName('frameset')[1];
+var frame3 =
+	window.top.document.documentElement.getElementsByTagName('frameset')[2];
+
+function setupFrames() {
+	if (!frame1) {
+		return;
+	}
+
+	frame1.rows = '101,*';
+	frame2.cols = '234,*';
+	frame3.rows = '10,*';
+	frame1.focus();
+	if (top.frames[0] && top.frames[0].document.getElementById('jsclock')) {
+		top.frames[0].document.getElementById('jsclock').style.display = 'none';
+		top.frames[0].document.getElementById('jsclock').style.display =
+			'block';
+	}
+	if (top.frames[1] && top.frames[1].activateItem) {
+		top.frames[1].activateItem(
+			String(top.frames[3].document.location));
+	}
+
+	if (document.getElementById('focusItem') != null)
+	{
+		if (eval("document.getElementById('" + document.getElementById('focusItem').value + "')" + ".disabled") == false)
+		{
+			eval("document.getElementById('" + document.getElementById('focusItem').value + "')" + ".focus();");
+		}
+	}
+}
+
+function setupFramesFullScreen() {
+	
+	
+	if (!frame1) {
+		return;
+	}
+	frame1.rows = '*,100%';
+	frame2.cols = '*,100%';
+	frame3.rows = '*,100%';
+	frame1.focus();
+}
+
+function help(url) {
+	window
+		.open(
+			url,
+				'help','toolbar = 0,location = 0,directories = 0,status = 1,menubar = 0,scrollbars = 1,resizable = 1 ');
+}
+
+liballmsg["tr_TR"] =
+	new Array(
+		"Ýþlemden vazgeçmek istediðinize emin misiniz?",
+		"Bugünden küçük tarih giremezsiniz.",
+		"Ýþlem tarihi olarak 35 günden daha ileri bir tarih seçilemez. Lütfen iþlem tarihini deðiþtirin",
+		"Ýlk ödeme tarihi olarak bugünden daha önceki bir tarih seçilemez.Lütfen tarihi deðiþtirin.",
+		"Ýlk ödeme tarihi olarak 90 günden daha ileri bir tarih seçilemez. Lütfen ilk ödeme tarihini deðiþtirin",
+		"Bu iþlem için eksi bakiyeli kredili hesabýnýzý kullanacaksýnýz.Ýþleme devam etmek istiyor musunuz?",
+		"Hesabýnýz eksi bakiyeye düþüyor. Ýþleme devam etmek istiyor musunuz?",
+		"Kullanýlacak TRL hesap serbest bölge hesabý olamaz.");
+
+liballmsg["en_US"] =
+	new Array(
+		"Are you sure to cancel the transaction?",
+		"Dates earlier than today are not accepted.",
+		"Dates later than 35 days are not accepted future transactions. Please change transaction date.",
+		"Dates earlier than today are not accepted as first payment date. Please change date.",
+		"Dates later than 90 days are not accepted as first payment date. Please change first payment date.",
+		"Your account with minus balance will be used for the transaction. Do you want to continue?",
+		"Your account balance will be minus after completing the transaction. Do you want to continue?",
+		"Account to be used may not be of free zone.");
+
+function getMultipleValueCurrency(val) {
+	first = val.indexOf("#!#");
+	var rest = val.substring(first + 3, val.length);
+	middle = rest.substring(0, rest.indexOf("#!#"));
+	return middle;
+}
+function sameMultipleAccounts(account1, account2) {
+	if (account1.substring(0, account1.indexOf('#'))
+		== account2.substring(0, account2.indexOf('#'))) {
+		return true;
+	} else {
+		return false;
+	}
+}
+function sameAccounts(account1, account2) { // account2 with multiple values
+	if (account1 == account2.substring(0, account2.indexOf('#'))) {
+		return true;
+	} else {
+		return false;
+	}
+}
+function futureDate(comboName, isoDate) {
+
+	
+
+	var comboDate = getComboAsISO(comboName);
+	return (comboDate >= isoDate);
+
+}
+function after(combo1, combo2) {
+	var s = getComboAsISO('document.mainForm.'+combo1);
+	var e = getComboAsISO('document.mainForm.'+combo2);
+
+	return (e > s);
+}
+function afterOrEqual(combo1, combo2) {
+	var s = getComboAsISO('document.mainForm.'+combo1);
+	var e = getComboAsISO('document.mainForm.'+combo2);
+
+	return (e >= s);
+}
+
+function isPlakaNumber(data){
+	var numbers = "0123456789";
+	for(i=0;i<data.length;i++){
+		var char1 = data.charAt(i);
+		if(numbers.indexOf(char1)==-1){
+			return false;
+		}
+	}
+	return true;
+}
+function isNumeric(data) {
+	var alphabet = "0123456789";
+	return checkCharsFromList(alphabet,data);
+}
+
+function removeTurkishChars(strValue) 
+{
+	var newStrValue = strValue;
+	newStrValue = newStrValue.replace(/ð/g, "g"); 
+	newStrValue = newStrValue.replace(/Ð/g, "G");
+	newStrValue = newStrValue.replace(/ö/g, "o");
+	newStrValue = newStrValue.replace(/Ö/g, "O");
+	newStrValue = newStrValue.replace(/Ç/g, "C");
+	newStrValue = newStrValue.replace(/ç/g, "c");
+	newStrValue = newStrValue.replace(/þ/g, "s");
+	newStrValue = newStrValue.replace(/Þ/g, "S");
+	newStrValue = newStrValue.replace(/ý/g, "i");
+	newStrValue = newStrValue.replace(/Ý/g, "I");
+	newStrValue = newStrValue.replace(/ü/g, "u");
+	newStrValue = newStrValue.replace(/Ü/g, "U");
+	return newStrValue;	
+}
+
+function toNonTRCharsWithUpperCase(strValue) 
+{	
+	return (removeTurkishChars(toTRUpperCase(strValue)));	
+}
+
+
+function isValidNumber(strValue) {
+	var reValidString = /^\d*$/;
+	return reValidString.test(strValue) || strValue.length == 0;			
+}
+
+function isAlpha(data){
+	//ikinci ksýmý girip harf girmediyse
+
+	var alphabet = "ABCÇDEFGÐHIÝJKLMNOÖPRSÞTUÜVYZabcçdefgðhýijklmnoöprsþtuüvyz";
+
+	return checkCharsFromList(alphabet,data);
+}
+
+function isAlphaUpper(data){
+	//ikinci ksýmý girip harf girmediyse
+
+	var alphabet = "ABCÇDEFGÐHIÝJKLMNOÖPRSÞTUÜVYZ";
+
+	return checkCharsFromList(alphabet,data);
+}
+
+
+
+function isAlphaUpperOrNumber(data){
+	//ikinci ksýmý girip harf girmediyse
+
+	var alphabet = "ABCÇDEFGÐHIÝJKLMNOÖPRSÞTUÜVXYZ1234567890\\/-";
+	return checkCharsFromList(alphabet,data);
+}
+
+
+function toTRUpperCase(val) {
+	val = val.replace('i','Ý');		
+	return val.toUpperCase();
+}
+
+function checkAboneNoByType(aboneno,type){
+	if(type=='S')
+		return true;
+	if(type=='&'){
+		return isAlphaUpperOrNumber(aboneno);
+	}
+	if(type=='?'){
+		return isAlphaUpper(aboneno);
+	}
+	if(type=='A'){
+		return isAlpha(aboneno);
+	}
+	return true;
+}
+
+function checkCharsFromList(list,data){
+	//ikinci ksýmý girip harf girmediyse
+
+	for(i=0;i<data.length;i++){ 
+		var char1 = data.charAt(i);
+		if(list.indexOf(char1)==-1){
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+function alertMSG(message){
+    //alert(processMessage(message));
+    is_DefaultSubmit = false;
+    stopProcess();
+    overlayShow();
+	showAlert(processMessage(message));
+}
+
+var validMessageList = new Array();
+function confirmMSG(message) {
+    if (validMessageList[message] == undefined) {
+        validMessageList[message] = false;
+    }
+    if (validMessageList[message] == true) {
+        startProcess();
+        return true;
+    }
+
+    submitButton.unbind("click");
+    showConfirm(message, function () { validMessageList[message] = true; submitButton.click(); });
+
+
+    is_DefaultSubmit = false;
+    stopProcess();
+    overlayShow();
+
+    return validMessageList[message];
+}
+
+function processMessage(message){
+
+	var temp = message;
+	while(temp.indexOf('<img width=3 heigth=3 border=1 alt=')>-1){
+		temp = temp.replace('<img width=3 heigth=3 border=1 alt=','');
+	}
+	while(temp.indexOf("&quot;")>-1){
+		temp = temp.replace('&quot;','"');
+	}
+	while(temp.indexOf("&acute;")>-1){
+		temp = temp.replace("&acute;","'");
+	}
+	return temp;
+
+}
+
+function CheckDigitControl(vergiKimlikNo) {
+
+	var x=[9,8,7,6,5,4,3,2,1,0];
+	var y=[512,256,128,64,32,16,8,4,2,0];
+	var Islem1=new Array(10);
+	var Islem2=new Array(10);
+	var Temp=0;
+	var Temp2=0;
+	var Temp3=0;
+
+	var a=new Array(10);
+	var b=new Array(10);
+	var c=new Array(10);
+
+   	var f=new Array(10);
+	if(vergiKimlikNo.length==10){
+
+		for(i=0;i < a.length-1;i++){
+     		f[i]=0;
+     		a[i]=parseInt(vergiKimlikNo.charAt(i));
+			b[i]= a[i];
+			Islem1[i]= b[i] + x[i];
+			if (Islem1[i]>=10){
+      			Islem1[i]-=10;
+      		}
+			Islem2[i]=''+(Islem1[i]*y[i]);
+
+
+			for(j=0;j<Islem2[i].length;j++){
+      			c[j]=Islem2[i].charAt(j);
+				f[i]+=parseInt(c[j]);
+			}
+
+			Temp=0;
+			while(f[i]>=10){
+				var hedeh = f[i]+'';
+
+      			for(z=0;z<hedeh.length;z++){
+       				Temp+=parseInt(hedeh.charAt(z));
+				}
+				f[i]= Temp;
+				if(f[i]>=10){
+					Temp=0;
+				}
+			}
+			Temp2+=f[i];
+		}
+
+		Temp3= (((parseInt((Temp2/10)+1))*10)-Temp2) % 10;
+		a[9] = parseInt(vergiKimlikNo.charAt(9));
+		
+		if (Temp3==a[9]){
+     		return true; o// VergiKimlikNo gecerli
+     	}else {
+			return false;
+		}
+	}else{
+		return false;
+	}
+}
+
+function KimlikCheckDigit(TCKimlikNo) {      
+		if (TCKimlikNo.length != 11)
+			return false;
+
+		var m_tcNo = TCKimlikNo;
+		if (m_tcNo < 1)
+			return false;
+
+		var tmp1, tmp2, even_sum, odd_sum, total;
+		var chkDigit1, chkDigit2;
+		tmp1 = Math.floor(m_tcNo / 100);
+		tmp2 = Math.floor(m_tcNo / 100);
+
+		var D = new Array(9);
+
+		for (n = 8; n >= 0; n--) {
+			D[n] = tmp1 % 10;
+			tmp1 = Math.floor(tmp1 / 10);
+		}
+
+		odd_sum = D[8] + D[6] + D[4] + D[2] + D[0];
+		even_sum = D[7] + D[5] + D[3] + D[1];
+		total = odd_sum * 3 + even_sum;
+		chkDigit1 = (10 - (total % 10)) % 10;
+		odd_sum = chkDigit1 + D[7] + D[5] + D[3] + D[1];
+		even_sum = D[8] + D[6] + D[4] + D[2] + D[0];
+		total = odd_sum * 3 + even_sum;
+		chkDigit2 = (10 - (total % 10)) % 10;
+		tmp2 = tmp2 * 100 + chkDigit1 * 10 + chkDigit2;
+		if (tmp2 != m_tcNo)
+			return false;
+		else
+			return true;
+	}
+
+
+
+function BagkurCheckDigitControl(SicilNo) {
+			var r1;var r2;var r3;var r4;var r5;var r6;var r7;var r8;	
+			var r11;var r12;var r13;var r14;var r15;var r16;var r17;var r18;
+			var l1;var l2;var l3;var l4;var l5;var l6;var l7;var l8;    
+			var l11;var l12;var l13;var l14;var l15;var l16;var l17;var l18;
+
+			//son Digit
+			r1=SicilNo.substring(0,1);		r2=SicilNo.substring(1,2);		r3=SicilNo.substring(2,3);
+			r4=SicilNo.substring(3,4);		r5=SicilNo.substring(4,5);		r6=SicilNo.substring(5,6);
+			r7=SicilNo.substring(6,7);		r8=SicilNo.substring(7,8);
+			r11=r1*8;	r12=r2*7;	r13=r3*6;	r14=r4*5;	r15=r5*4;	r16=r6*3;	r17=r7*2;	r18=r8*1;
+
+			var rTotalLastDigit = "" + r11 + r12 + r13 + r14 + r15 + r16 + r17 + r18;
+			
+			var rtotalSum=0;
+			var tmp1 = 0;
+			for (k=0;k<=rTotalLastDigit.length-1;k++)
+			{
+				tmp1 = rTotalLastDigit.substring(k,k+1) * 1;
+				rtotalSum = rtotalSum + tmp1;
+			}
+
+			var rGrandTotal = 10 - rtotalSum;
+			rGrandTotal = rGrandTotal + "";
+			var rLastDigit = rGrandTotal.substring(rGrandTotal.length-1,rGrandTotal.length);
+
+			// region sondan bi onceki Digit
+			l1=SicilNo.substring(0,1);		l2=SicilNo.substring(1,2);		l3=SicilNo.substring(2,3);
+			l4=SicilNo.substring(3,4);		l5=SicilNo.substring(4,5);		l6=SicilNo.substring(5,6);
+			l7=SicilNo.substring(6,7);		l8=SicilNo.substring(7,8);
+			l11=l1*8;	l12=l2*1;	l13=l3*2;	l14=l4*3;	l15=l5*4;	l16=l6*5;	l17=l7*6;	l18=l8*7;
+			var lTotalLastDigit = "" + l11 + l12 + l13 + l14 + l15 + l16 + l17 + l18;
+			var lTotalSum=0;
+			var tmp2 = 0;
+			for (s=0;s<=lTotalLastDigit.length-1;s++)
+			{
+				tmp2 = lTotalLastDigit.substring(s, s+1) * 1;
+				lTotalSum = lTotalSum + tmp2;
+			}
+
+			var temp = (rtotalSum+lTotalSum);
+			var a = temp + "";
+
+			var KontrolNo;
+			if (a.length < 2)
+			{
+				KontrolNo=0;
+				return false;
+			}
+			var b = a.substring(a.length-2, a.length);
+			temp = b*1;
+
+			//int LGrandTotal=10-(rtotalSum+lTotalSum);
+			var LGrandTotal = 10 - (temp);
+			LGrandTotal = LGrandTotal + "";
+			var lLastDigit = LGrandTotal.substring(LGrandTotal.length-1,LGrandTotal.length);
+
+			//////////////////
+			var Kontrol = SicilNo.substring(8,10);
+			if(Kontrol != (lLastDigit + rLastDigit))
+			{
+				KontrolNo=0;
+				return false;
+			}
+			else
+			{   
+				KontrolNo=1;
+				return true;
+			}
+}
+
+function validPeriod(comboEndDate, comboStartDate, days){ 
+
+
+	enddays = parseFloat(eval(comboEndDate + 'Year.value')) * 364 + 
+		parseFloat(eval(comboEndDate + 'Month.value')) * 30 + 
+		parseFloat(eval(comboEndDate + 'Day.value'));
+
+	startdays = parseFloat(eval(comboStartDate + 'Year.value')) * 364 + 
+		parseFloat(eval(comboStartDate + 'Month.value')) * 30 + 
+		parseFloat(eval(comboStartDate + 'Day.value'));
+	
+	daydiff = enddays - startdays;
+
+	if( daydiff > parseInt(days)){
+		return false;
+	}else{
+		return true;
+	}
+}
+
+function getComboAsISO(comboName){ 
+
+// tarihinin bugünden büyük olmasýný saðlar
+
+var year = $("#"+comboName+'Year').val();
+var month = $("#" + comboName + 'Month').val();
+var day = $("#" + comboName + 'Day').val();
+
+return  year + month + day;
+}
+
+function getComboAsDate(comboName){ 
+
+	// tarihinin bugünden büyük olmasýný saðlar
+
+    var year = $("#" + comboName + 'Year').val();
+    var month = $("#" + comboName + 'Month').val();
+    var day = $("#" + comboName + 'Day').val();
+
+	var myDate = new Date();
+	myDate.setFullYear(year, month, day);
+	return myDate;
+	}
+
+
+function formatCurrencyTrl(num) {
+	num = num.replace(/\./g,'');
+	if (num != "0") {
+		while ((num.length > 0) && (num.substring(0, 1) == "0"))
+			num = num.substring(1, num.length);
+		for (var i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++)
+			num =
+				num.substring(0, num.length - (4 * i + 3))
+					+ '.'
+					+ num.substring(num.length - (4 * i + 3));
+
+	}
+	return num;
+}
+
+function isValidEmail(value) {
+	//var email = new RegExp("^.+@.+\\..+$");
+	var email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+	return email.test(value);
+}
+
+function isValidPhone(value) {
+	var number = new RegExp("^[0-9]{10}$");
+	return number.test(value);
+}
+
+//form inputunu decimalli ya da decimalsiz formata çevirir
+
+function ChangeCurrencyFormat(currency, input_element) {
+
+	if (currency == null || currency == '')
+		return;
+	if (currency == "TRL") {
+		input_element.AMOUNTFX = false;
+		input_element.AMOUNTTRL = true;
+		var index = input_element.value.indexOf(",");
+		if (index > 0) {
+			input_element.value = input_element.value.substring(0, index);
+		}
+	} else {
+		input_element.AMOUNTFX = true;
+		input_element.AMOUNTTRL = false;
+	}
+
+	if (window._validation) {
+		document.mainForm.bProcessed = false;
+		input_element.bProcessed = false;
+		_validation.setup();
+	}
+
+}
+
+
+function checkMultiple(enteredAmount,multipleAmount){
+	if(enteredAmount/multipleAmount==Math.floor(enteredAmount/multipleAmount)){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+function getRadioArrayMultipleValue(rd,index){
+
+var multiple_value = getRadioArrayValue(rd);
+var multiple_value_items = multiple_value.split('$!$');
+return multiple_value_items[index];
+
+}
+
+function getCustomerNoFromAccount(account) {
+	var account_items = account.split('-');
+	return account_items[1];
+}
+
+
+function getRadioArrayValue(rd){
+	if (rd.length) {
+		for(var i = 0; i < rd.length; i++){
+			if(rd[i].checked) return rd[i].value;
+		}
+	} else if (rd.checked) {
+		return rd.value;
+	}
+	return "";
+}
+
+function getRadioArrayIndex(rd){
+	if (rd.length) {
+		for(var i = 0; i < rd.length; i++){
+			if(rd[i].checked) return i;
+		}
+	}
+	else if (rd.checked) {
+		return 0;
+	}
+	
+return -1;
+}	
+
+function getRadioArrayText(rd){
+for(var i = 0; i < rd.length; i++){
+if(rd[i].checked)
+return rd[i].text;
+}
+return "";
+}	
+
+function getMultipleComboSelectedValue(combos){
+for(var i = 0; i < combos.length ; i++){
+var item = combos[i];
+if (item.options != null) {
+	if(item.options[item.options.selectedIndex].value!='')
+		return item.options[item.options.selectedIndex].value;
+}
+}
+}
+
+function formatCurrencyFx(num) {
+	if (num.indexOf(",") == -1)
+		return formatCurrencyTrl(num);
+	if (num.lastIndexOf(",") != (num.indexOf(",")))
+		return (formatCurrencyFx(num.substring(0, num.length - 1)));
+	if (num.length > (num.indexOf(",") + 3))
+		return (formatCurrencyFx(num.substring(0, num.length - 1)));
+	if (num.length == (num.indexOf(",") + 1))
+		return (formatCurrencyTrl(num.substring(0, num.length - 1)) + ",");
+	num = num.replace(/\./g,'');
+	while ((num.length > 0) && (num.substring(0, 1) == "0"))
+		num = num.substring(1, num.length);
+	num = num.replace(/\,/g, '.');
+	if (isNaN(num))
+		num = "0";
+	inum = Math.floor(num * 100 + 0.50000000001);
+	snum = Math.floor(inum / 100).toString();
+	if (num.length > (num.indexOf(".") + 2)) {
+		cents = inum % 100;
+		if (cents < 10)
+			cents = "0" + cents;
+	} else if (num.length > (num.indexOf(".") + 1))
+		cents = (inum % 100) / 10;
+	for (var i = 0; i < Math.floor((snum.length - (1 + i)) / 3); i++)
+		snum =
+			snum.substring(0, snum.length - (4 * i + 3))
+				+ '.'
+				+ snum.substring(snum.length - (4 * i + 3));
+	return (snum + "," + cents);
+}
+
+function formatCurrencyFlex(num) {
+	if (num.indexOf(",") == -1)
+		return formatCurrencyTrl(num);
+	if (num.lastIndexOf(",") != (num.indexOf(",")))
+		return (formatCurrencyFlex(num.substring(0, num.length - 1)));
+	if (num.length > (num.indexOf(",") + 5))
+		return (formatCurrencyFlex(num.substring(0, num.length - 1)));
+	if (num.length == (num.indexOf(",") + 1))
+		return (formatCurrencyTrl(num.substring(0, num.length - 1)) + ",");
+	num = num.replace(/\./g,'');
+	while ((num.length > 0) && (num.substring(0, 1) == "0"))
+		num = num.substring(1, num.length);
+	
+	num = num.replace(/\,/g, '.');
+	if (isNaN(num))
+		num = "0";
+		
+	centsDisplay = num.substring (num.indexOf(".") + 1, num.length);
+	snum = num.substring (0, num.indexOf("."));
+	 
+	for (var i = 0; i < Math.floor((snum.length - (1 + i)) / 3); i++)
+		snum =
+			snum.substring(0, snum.length - (4 * i + 3))
+				+ '.'	
+				+ snum.substring(snum.length - (4 * i + 3));
+	
+	return (snum + "," + centsDisplay);
+}
+
+
+function formatCCNumber(num) {
+	num = num.replace(/-/g,'');
+	num = num.replace(/\s/g,'');
+	var x = Math.floor((num.length - 1) / 4);
+	for (var i = 0; i < x; i++)
+		num =
+			num.substring(0, (i + 1) * 4 + i)
+				+ '-'
+				+ num.substring((i + 1) * 4 + i);
+	return num;
+}
+
+function formatAmexCCNumber(num) {
+	num = num.replace(/-/g,'');
+	num = num.replace(/\s/g,'');
+	var l = num.length;
+	if (l < 4)
+		return num;
+	if (l < 11)
+		return num.substring(0, 4) + "-" + num.substring(4);
+	return num.substring(0, 4)
+		+ "-"
+		+ num.substring(4, 10)
+		+ "-"
+		+ num.substring(10);
+}
+
+function getSelectedIndex(selectObj, optionValue) {
+	for (var i = 0; i < selectObj.options.length; i++)
+		if (selectObj.options[i].value == optionValue)
+			return i;
+	return 0;
+}
+
+function getSelectedValue(selectObj) {
+	return selectObj.options[selectObj.selectedIndex].value;
+}
+
+function updateAction(dest) {
+	document.mainForm.action = dest;
+}
+
+
+
+function parse(num) {
+	while(num.indexOf(".")!=-1){
+		num=num.replace(/\./g,'');
+	}
+	return num;
+}
+function parseInputAsFloat(num) {
+	parse(num);
+	while(num.indexOf(",")!=-1){
+		num=num.replace(/\,/g,'.');
+	}
+	return parseFloat(num);
+}
+function parseFormattedNumeric(num) {
+	num=num.replace(/\./g,'').replace(/\,/g,'.');
+	return parseFloat(num);
+}
+
+function PrintPage(){
+	window.print();
+}
+// --- totalamount hesabi ---
+// limitsdefstart.jsp & comoneytrtobenefstart.jsp
+// toplam == 0 ise alert veriyorum
+// ve önceden girilip post edilmis ve InTxnData' ya eklenmis degerler ,
+// geri tusu ile gelinip silinirse post edilmebilmesi ve InTxn' in update edilebilmesi için
+// tutar == "" olan alanlara 0 atiyorum...
+
+function calculatetotalamount(count, amount, chflag) {
+	//alert("fonksiyondayiz");
+
+	//alert("amount --- "+amount);
+	//alert("count --- "+count);
+
+	var tutar = 0;
+	var tutarint = 0;
+	var toplam = 0;
+
+	for (var i = 1; i < count + 1; i++) {
+		tutar = eval(amount + i + ".value");
+
+		//alert("tutar --- >"+tutar);
+
+		if (tutar == "") {
+			eval(amount + i).value = 0;
+		} else {
+			var tutarint =
+				parseFloat(tutar.replace(/\./g,'').replace(/\,/g,'.'));
+			//alert("tutarint --- >"+tutarint);
+			toplam = tutarint + toplam;
+		}
+	}
+
+	alert("toplam" + toplam);
+
+	if (toplam == 0) {
+		alert('Lütfen'+chflag + 'yazin.');
+		return false;
+	} else {
+		document.mainForm.txtTotalAmount.value = toplam;
+		//alert("toplam --- >"+toplam);
+		return true;
+	}
+
+}
+//used in menu pages.
+function submitMenuForm(page) {
+	document.mainForm.action = page;
+	document.mainForm.txtFirstPage.value = page;		
+	document.mainForm.submit();
+}
+
+//	function getBasePath(){ return "<%=BasePath(request)%>"; } 
+
+function GetCookie(name) {
+	var arg = name + "=";
+	var alen = arg.length;
+	var clen = document.cookie.length;
+	var i = 0;
+	while (i < clen) {
+		var j = i + alen;
+		if (document.cookie.substring(i, j) == arg)
+			return true;
+		i = document.cookie.indexOf(" ", i) + 1;
+		if (i == 0)
+			break;
+	}
+	return null;
+}
+function openWindow(theURL, winName, features) {
+	window.open(theURL, winName, features);
+}
+
+//mask functions
+function maskPaste(objEvent) {
+	var strPasteData = window.clipboardData.getData("Text");
+	var objInput = objEvent.srcElement;
+	if (!isValidNumber(strPasteData)) {
+		alertMSG('Lütfen yalnizca rakam giriniz');
+		objInput.focus();
+		return false;
+	}
+}		
+function maskKeyPress(objEvent) {
+	var iKeyCode, strKey, objInput;  
+	if (isIE) {
+		iKeyCode = objEvent.keyCode;
+		objInput = objEvent.srcElement;
+	} else {
+		iKeyCode = objEvent.which;
+		objInput = objEvent.target;
+	}
+	strKey = String.fromCharCode(iKeyCode);
+				
+	if (isValidNumber(objInput.value)) {
+		objInput.validValue = objInput.value;
+		if (!reValidChars.test(strKey) && !reKeyboardChars.test(strKey) && !checkClipboardCode(objEvent, strKey)) {
+			alertMSG('Lütfen yalnizca rakam giriniz');
+			return false;
+		}
+	} else {
+		alertMSG('Lütfen yalnizca rakam giriniz');
+		objInput.value = objInput.validValue;
+		return false;
+	}
+}
+			
+function checkClipboardCode(objEvent, strKey) {
+  	if (isNS6)
+    	return objEvent.ctrlKey && reClipboardChars.test(strKey);
+  	else
+    	return false;
+}		
+			
+function maskChange(objEvent) {
+  	var objInput;
+  	if (isIE) {
+    	objInput = objEvent.srcElement; 
+  	} else {
+    	objInput = objEvent.target;
+  	}
+			 
+	if (!isValidNumber(objInput.value)) {
+	   	alertMSG('Lütfen yalnizca rakam giriniz');
+		objInput.value = objInput.validValue || "";
+		objInput.focus();
+	   	objInput.select(); 
+	} else {
+		objInput.validValue = objInput.value;
+	}
+}			
+
+function getNumericValue(strNumber) {
+    var strTemp = strNumber.replace(/\./g,'').replace(/\,/g,'.');
+    if (strTemp == "" || isNaN(strTemp)) 
+      strTemp = "0";
+    return parseFloat(strTemp);
+}			
+
+  function formatDecimal(num, decimalNum, bLeadingZero, bParens, bThousandSep)
+  { 
+    if (isNaN(parseInt(num))) return "NaN";
+
+	var tmpNum = num;
+	var iSign = num < 0 ? -1 : 1;
+	
+	tmpNum *= Math.pow(10,decimalNum);
+	tmpNum = Math.round(Math.abs(tmpNum))
+	tmpNum /= Math.pow(10,decimalNum);
+	tmpNum *= iSign;
+	
+	var tmpNumStr = new String(tmpNum).replace(/\./g, ',');
+
+	if (!bLeadingZero && num < 1 && num > -1 && num != 0)
+		if (num > 0)
+			tmpNumStr = tmpNumStr.substring(1,tmpNumStr.length);
+		else
+			tmpNumStr = "-" + tmpNumStr.substring(2,tmpNumStr.length);
+		
+	if (bThousandSep && (num >= 1000 || num <= -1000)) {
+		var iStart = tmpNumStr.indexOf(",");
+		if (iStart < 0)
+			iStart = tmpNumStr.length;
+
+		iStart -= 3;
+		while (iStart >= 1) {
+			tmpNumStr = tmpNumStr.substring(0,iStart) + "." + tmpNumStr.substring(iStart,tmpNumStr.length)
+			iStart -= 3;
+		}		
+	}
+	var extraZeroCnt = decimalNum;
+	iStart = tmpNumStr.indexOf(",");
+	
+	if (iStart > 0)
+	  extraZeroCnt = decimalNum - (tmpNumStr.length - (iStart+1)) ;
+	else 
+	  tmpNumStr += "," ;
+	
+	while (extraZeroCnt > 0) {
+	  tmpNumStr += "0";
+	  extraZeroCnt --;
+	}
+
+	if (bParens && num < 0)
+		tmpNumStr = "(" + tmpNumStr.substring(1,tmpNumStr.length) + ")";
+
+	return tmpNumStr;		
+  }
+  function resetSelBox (selBox) {
+    for (var i = selBox.options.length-1; i >0 ; i--)
+	  selBox.remove(i);
+  }	  
+  
+  function setDateComboIndexes (selBox, day, month, year) {
+    daySelBox = eval(selBox + 'Day');
+    monthSelBox = eval(selBox + 'Month');
+    yearSelBox = eval(selBox + 'Year');
+    
+    daySelBox.selectedIndex = day;
+    monthSelBox.selectedIndex = month;
+    yearSelBox.selectedIndex = year;    
+  }
+  
+  function disableDateCombo (selBox, disabled) {
+    daySelBox = eval(selBox + 'Day');
+    monthSelBox = eval(selBox + 'Month');
+    yearSelBox = eval(selBox + 'Year');
+    
+    daySelBox.disabled = disabled;
+    monthSelBox.disabled = disabled;
+    yearSelBox.disabled = disabled;
+  }
+  
+  function setSelIndexByVal (selBox, val) {
+  	for (var i = 0; i < selBox.options.length; i++) {
+	  if (selBox.options[i].value == val) {
+	    selBox.selectedIndex = i;
+	    return;
+	  }
+	}  
+  }
+  
+  var whitespaceall = " \t\n\r";
+  var whitespace = "\t\n\r";
+  function isEmpty(s){return ((s == null) || (s.length == 0))}
+  function isWhitespace(s){
+	var i;
+	if (isEmpty(s)) return true
+	for (i = 0; i < s.length;i++)	{
+		var c = s.charAt(i);
+		if (whitespaceall.indexOf(c) == -1)
+			return false
+	}
+	return true
+  }
+
+  function hasWhitespace(s){
+	var i;
+	if (isEmpty(s)) return true;
+	if (isWhitespace(s)) return true;
+	for (i = 0; i < s.length;i++)	{
+		var c = s.charAt(i);
+		if (whitespace.indexOf(c) != -1)
+			return true;
+	}
+	return false;
+  }
+  function getDateDiff(fromDate, toDate, format){
+		if(format==null) format="milliseconds";	
+		var formatsMS = {
+			milliseconds:1,
+			seconds:1000,
+			minutes:1000*60,
+			hours:1000*60*60,
+			days:1000*60*60*24,
+			weeks:1000*60*60*24*7,
+			months:function(m){
+				var ms = this.days,
+				daysPer = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+				return ms*daysPer[m];
+			},
+			years:function(y){
+				var ms = 1000*60*60*24*365;
+				//add a day for leap years
+				if( (y % 4 == 0 && y % 100 == 0) || y % 400 == 0 )
+					ms += this.days;
+				return ms;
+			}
+		},
+		//get the time difference in milliseconds
+		ms = toDate.getTime()-fromDate.getTime(),
+		reqFormats = format.split(","),
+		isYearReq = (format.indexOf("years")>-1),
+		isMonthReq = (format.indexOf("months")>-1),
+		result = {};
+		
+		if(isYearReq){ 
+			result["years"]=0;
+			for(var y=fromDate.getFullYear(); y <= toDate.getFullYear(); y++){	
+				var yearMS = formatsMS.years(y);
+				if(ms >= yearMS){
+					ms -= yearMS;
+					result["years"]+=1;
+				}
+			}
+			//use "to" year for calculating decimal
+			formatsMS.years = formatsMS.years(toDate.getFullYear());
+		}
+		if(isMonthReq){
+			result["months"]=0;
+			var month = fromDate.getMonth(),
+				year = (result["years"]>0) ? fromDate.getFullYear() + result["years"] : fromDate.getFullYear();					
+			for(month; month<=11; month++){
+				var monthMS = formatsMS.months(month);
+				if(month==toDate.getMonth() && year== toDate.getFullYear()) break;
+				else if(ms >= monthMS){
+					ms -= monthMS;
+					result["months"]+=1;
+				}
+				if(month==12 && year < toDate.getFullYear()) {
+					month=0; 
+					year++;
+				}
+			}
+			//use "to" month for decimal
+			formatsMS.months = formatsMS.months(toDate.getMonth());
+		}
+
+		//handle the remaining milliseconds
+		for(var f=0; f < reqFormats.length && reqFormats[0]!=""; f++){
+			var res=(f<reqFormats.length-1) ? Math.floor(ms/formatsMS[reqFormats[f]]) : ms/formatsMS[reqFormats[f]];
+			if(ms>0) result[reqFormats[f]] = (result[reqFormats[f]]>=0) ? result[reqFormats[f]]+=res : res;
+			else result[reqFormats[f]]=0;
+
+			ms -= res * formatsMS[reqFormats[f]];
+		}
+		return result;
+	}
+  function isValidBenefName(data)
+  {   
+  var allowedChars = "ABCÇDEFGÐHIÝJKLMNOÖPQRSÞTUÜVWXYZabcçdefgðhýijklmnoöpqrsþtuüvwxyz0123456789.()\#-/*+$#!?'%&=_@,:; ";
+   return checkCharsFromList(allowedChars,data);
+  }
+  
+  function isValidComment(data)
+  {
+  var allowedChars = "ABCÇDEFGÐHIÝJKLMNOÖPQRSÞTUÜVWXYZabcçdefgðhýijklmnoöpqrsþtuüvwxyz0123456789.()\#-/*+$#!?'%&=_@,:; ";
+   return checkCharsFromList(allowedChars,data);
+  }  
+
+  
+  

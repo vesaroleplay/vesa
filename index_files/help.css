@@ -1,0 +1,68 @@
+.help-container{ width:100%; height:auto; z-index:898; position:absolute; left:0px; top:0px; bottom:33px; height:100%; display:none; }
+.help-wrapper{ position:relative; width:100%; height:100%;} 
+.help-box{  position:relative;  background:url(../images/bg/help-bg.png) repeat 0 0; height:100%;}
+.help-header{ height:75px; position:absolute; left:0;top:0; width:100%; background:url(../images/bg/help-top-divider.png) repeat-x 0 bottom; }
+.help-header-center{width:930px; margin:0 auto;}
+.help-logo{ float:left; margin:20px 0 0 0px; cursor:default; background: url('../images/icons/help-logo.png'); width:322px; height: 44px;display:block;}
+.help-closer{ float:right;margin:20px 0 0 30px; overflow:hidden; background: url('../images/icons/help-close.png'); width:114px; height: 38px;display:block;}
+.help-content{width:930px; margin:0 auto; padding-top:0px; overflow:hidden; height:100%;}
+.help-content .left-part{ float:left; height:100%; width:588px; position:relative; *position:inherit; margin-top:75px; padding-top:15px; background:url(../images/bg/help-content-divider.png) repeat-y right 0;  }
+.help-content .left-part h2{font:19px/24px arial;  color:#fff;}
+.help-content .left-part h3{font:15px/20px arial;  color:#fff;}
+.help-content .right-part{ float:left; margin-left:42px; width:300px; margin-top:110px;padding-top:15px;}
+.help-tool-tip-wrap{ position:relative; height:463px;}
+.tool-image{ position:absolute; top:208px; left:0;}
+.tool-image.tool-tip-menu{ background:url(../images/bg/help-menu.png) no-repeat; height:45px; width:515px;}
+.help-tool-tip{ position:absolute; z-index:1;}
+.help-content .left-part .help-tool-tip h2{ width:135px; margin:0 auto; text-align:center; font:bold 16px/18px arial; color:#575757; padding-bottom:5px;}
+.help-tool-tip p{ text-align:center;font:bold 12px/14px arial; width:160px; margin:0 auto;}
+#help-tool-tip-1{ background:url(../images/bg/help-tool1.png) no-repeat 0 0; width:211px; height:217px; line-height:15px; left:32px; top:0;}
+#help-tool-tip-2{background:url(../images/bg/help-tool2.png) no-repeat 0 0; width:211px; height:217px; line-height:15px; left:337px; top:0;}
+#help-tool-tip-3{background:url(../images/bg/help-tool3.png) no-repeat 0 0; width:211px; height:211px;left:125px; bottom:0; }
+#help-tool-tip-4{background:url(../images/bg/help-tool4.png) no-repeat 0 0; width:211px; height:214px;left:330px; bottom:-4px;} 
+#help-tool-tip-1 h2{ margin-top:48px;}
+#help-tool-tip-2 h2{margin-top:45px;}
+#help-tool-tip-3 h2{margin-top:61px;}
+#help-tool-tip-4 h2{margin-top:63px; padding-bottom:10px;}
+.help-bottom-arrow{ position:absolute; background:url(../images/bg/help-bottom-arrow.png) no-repeat 0 0;width:27px; height:12px; left:130px; top:0px; padding:0; margin:0;}
+.help-bottom-arrow-wrapper{ margin:0 auto; width:930px; height:0; position:relative; clear:both;}
+.help-left-Shadow {background: url("../images/bg/HelpLigtboxLC.png") repeat-y scroll left top transparent;height: 100%;left: -14px;position: absolute;top: 0;width: 15px;}
+.help-right-shadow {background: url("../images/bg/HelpLigtboxRC.png") repeat-y scroll 0 0 transparent;height: 100%;position: absolute;right: -15px;top: 0;width: 15px;}
+.help-top-Shadow {background: url("../images/bg/HelpLigtboxTC.png") repeat-x scroll 0 0 transparent;height: 15px;left: 0;position: absolute;top: -15px;width: 100%;}
+.help-bottom-shadow {background: url("../images/bg/HelpLigtboxBC.png") repeat-x scroll 0 0 transparent;bottom: -15px;height: 15px;position: absolute;right: 0;width: 100%;}
+.help-left-top {left: -14px;top: -15px;background: url("../images/bg/HelpLigtboxLT.png") no-repeat scroll 0 0 transparent;position: absolute;height: 15px;width:15px}
+.help-right-top {right: -15px;top: -15px;background: url("../images/bg/HelpLigtboxRT.png") no-repeat scroll 0 0 transparent;position: absolute;height: 15px;width:15px}
+.help-left-bottom {background: url("../images/bg/HelpLigtboxLB.png") no-repeat scroll 0 0 transparent;position: absolute;bottom: -15px;left: -14px;height: 15px;width:15px}
+.help-right-bottom {background: url("../images/bg/HelpLigtboxRB.png") no-repeat scroll 0 0 transparent;position: absolute;bottom: -15px;right: -15px;height: 15px;width:15px}
+.help-content div.sss-all-left {height:auto;margin-bottom:20px;}
+.help-content .sss-all-right {float:left;width:100%; height:100%;}
+.help-left-category { background: url("../images/bg/SSSLeftCategory.png") no-repeat scroll 0 0 transparent; float: left; height: 276px; width: 240px;}
+.sss-all-tab-content {float:right;width:687px;height:60%;overflow:hidden; min-height:180px;}
+.help-left-category ul {width:205px;float:left;margin:5px 10px;}
+.help-left-category ul li { background: url("../images/bg/SSSLeftCategory.png") no-repeat scroll -10px -284px transparent; height: 52px;margin-top:1px; padding-left: 10px; width: 98%;}
+.help-left-category ul li:last-child { background:none;}
+.help-left-category ul li a { color: #FFFFFF; display: block; font: 19px/52px arial; width: 225px;}
+.help-left-category ul li a.activeLeft {background:url("../images/bg/SSSLeftCategory.png") no-repeat scroll 202px -336px transparent;}
+.sss-all-tab-menu {display: none;overflow: hidden;width: 674px;}
+ul.sss-all-tab-content-active {display:block;}
+.sss-all-tab-menu .sss-all-tab {float:left;width:100%;margin-bottom:5px;}
+.sss-all-tab-menu .sss-all-tab.last{margin-bottom:0;}
+.sss-all-tab-menu .sss-all-tab > a {float:none;display:block;padding:5px 0px 5px 20px;font: 12px/15px arial;color:#fff !important;background:url("../images/bg/sss-middle.png") repeat scroll 0 0 transparent;width:649px;}
+table.limit-table{ margin-top:6px;}
+.sss-all-tab-menu .sss-all-tab > a span {display:block; background:url("../images/bg/sss-plus.png") no-repeat scroll right center transparent; margin-right:10px; padding-right:15px;}
+.sss-all-tab-menu .sss-all-tab > a.selected span {display:block; background:url("../images/bg/sss-minus.png") no-repeat scroll right center transparent; margin-right:10px;}
+.sss-all-tab-menu .sss-all-tab ul {float:left;padding:0 0 0 20px !important;display:none;}
+.sss-all-tab-menu .sss-all-tab ul li {background: url("../images/bg/SSSLeftCategory.png") no-repeat scroll -87px -353px transparent;color: #FFFFFF;font: 12px/17px arial;margin-top:10px;margin-bottom: 5px;padding: 0 0 0 20px;}
+.sss-all-tab-menu .sss-all-tab ul.no-bullet li { background:none;}
+.sss-all-tab-menu .sss-all-tab ul li + li{margin-top:0;}
+.sss-all-tab ul li table td{ color: #FFFFFF;font: 12px/17px arial; padding-right:10px;}
+.links.button-type a + a {margin-left:5px;}
+* html .jspCorner{margin: 0 -3px 0 0;}
+.button-wrapper {width:100%;}
+.help-container-wrapper {width: 100%;height: auto;z-index: 898;position: absolute;left: 0px;top: 0px;bottom: 33px;height: 100%;display: none;}
+.sss-all-tab .sss-top {background:url(../images/bg/sss-top.png) no-repeat 0 0;width:100%;height:5px;}
+.sss-all-tab .sss-bottom {background:url(../images/bg/sss-bottom.png) no-repeat 0 0;width:100%;height:5px;}
+.security-content h2 {color:#fff; font-size:18px; line-height:21px; margin-top:12px;}
+.security-content ul {padding:0 0 0 10px;}
+.security-content ul li {background: url("../images/bg/SSSLeftCategory.png") no-repeat scroll -87px -353px transparent;color: #FFFFFF;font: 14px/20px arial;margin:5px 0 10px 0;padding: 0 0 0 20px; text-align:justify;}
+.security-content ul li + li{margin-top:0;}
